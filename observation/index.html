@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
+    <title>LED desk lamp featuring Winston Churchill</title>
+    <link rel="stylesheet" href="css/clearstyle.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code:300,400,700&display=swap" rel="stylesheet">
+  </head>
+
+<body>
+  <div id="back"></div>
+  <div id="info">
+    <p class="text">This is the Dimmable LED Desk Lamp, designed by obscure and elusive electronics company <a href="https://www.mokodirect.com/about-us/">MoKo</a> and released in 2017.</p>
+    <p class="text">It is the swiss army knife of lamps: in addition to its multiple controls for type of lighting, the lamp has a highly compact/maneuvarable frame and a USB charging port. The many functions and relatively low cost suggest it is targeted for students and others looking for convenient and multipurpose appliances.</p>
+    <p class="text" id="vartext">Hover over the replicated buttons to learn about their function, and click them to see how they affect the lighting.</p>
+  </div>
+  <div id="content">
+    <img id="churchill" src="assets/nolight"></img>
+    <div class="row">
+      <div id="lefticons">
+        <div id="power" onclick="powerButton()" class="item noselect">power</div>
+        <div id="nightlight" onclick="nightLight()" class="item noselect">night-light</div>
+      </div>
+      <div id="righticons">
+        <div id="temp" onclick="tempToggle()" class="item noselect">temp-toggle</div>
+        <div id="timer" class="item noselect">timer</div>
+      </div>
+    </div>
+    <div class="row" id="lightlevels">
+      <div onclick="levelChange(1)" class="level noselect">>></div>
+      <div onclick="levelChange(2)" class="level noselect">>></div>
+      <div onclick="levelChange(3)" class="level noselect">>></div>
+      <div onclick="levelChange(4)" class="level noselect">>></div>
+      <div onclick="levelChange(5)" class="level noselect">>></div>
+      <div onclick="levelChange(6)" class="level noselect">>></div>
+    </div>
+  </div>
+
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="function.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+</body>
+</html>
