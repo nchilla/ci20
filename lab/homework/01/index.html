@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Composition II in Red, Blue, and Yellow Divs</title>
+  <!--<link rel="stylesheet" href="style.css" type="text/css">-->
+  <style>
+    html,body{
+      width:100%;
+      height:100%;
+      margin:0;
+    }
+    :root{
+      --thin:solid 14px black;
+      --thick: solid 20px black;
+    }
+    div{
+      width:100%;
+      height:100%;
+      box-sizing:border-box;
+      float:left;
+      margin:0px;
+      padding:0px;
+    }
+    .t{
+      height:75%;
+    }
+    .b{
+      height:25%;
+    }
+    .t-l{
+      width:22%;
+    }
+    .t-r{
+      width:78%;
+      background-color:#ED1616;
+      border-left:var(--thick);
+      border-bottom:var(--thick);
+    }
+    .t-l-t{
+      height:45%;
+      border-bottom:solid 23px black;
+    }
+    .t-l-b{
+      height:55%;
+      border-top:var(--thick);
+      border-bottom:var(--thick);
+    }
+
+    .b-l{
+      width:22%;
+      background-color:#0064A3;
+    }
+    .b-r{
+      width:78%;
+      border-left:var(--thick);
+    }
+    .b-r-r{
+      width:10%;
+    }
+    .b-r-l{
+      width:90%;
+      border-right:var(--thick);
+    }
+
+    .b-r-r-t{
+      height:50%;
+      border-bottom:var(--thin);
+    }
+    .b-r-r-b{
+      height:50%;
+      border-top:var(--thin);
+      background-color:#E5CD5E;
+    }
+
+  </style>
+  </head>
+  <body>
+    <div class='t'>
+      <div class='t-l'>
+        <div class='t-l-t'></div>
+        <div class='t-l-b'></div>
+      </div>
+      <div class='t-r'></div>
+    </div>
+
+    <div class='b'>
+      <div class='b-l'></div>
+      <div class='b-r'>
+        <div class='b-r-l'></div>
+        <div class='b-r-r'>
+          <div class='b-r-r-t'></div>
+          <div class='b-r-r-b'></div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
