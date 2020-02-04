@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1">
+    <title>a lamp</title>
+    <link rel="stylesheet" href="css/clearstyle.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://use.typekit.net/ykf5zmv.css">
+  </head>
+
+  <body>
+    <div class='container'>
+      <div class='mood'>
+        <div class='row'>
+          <div class='topleft'></div>
+        </div>
+      </div>
+      <div class='level'>
+      </div>
+      <div class='options'></div>
+    </div>
+    
+    <div class='inputcont' id='powerbox'>
+      <div class='input'>power</div>
+      <div class='descriptor'>
+        The power button is the first input and the only required input. It is a gatekeeper that determines what other functions are accessible.
+      </div>
+    </div>
+    <div class='inputcont' id='levbox'>
+      <div class='input'>mood</div>
+      <div class='descriptor'>
+        Mood is not a required input, but only because the lamp assigns a default beforehand to determine the starting display. The lamp's interface is such that you are unable to specify the mood you want, and instead are only given the capability to cycle through them.
+      </div>
+    </div>
+    <div class='inputcont' id='intbox'>
+      <div class='input'>intensity</div>
+      <div class='descriptor'>
+        Like mood, intensity is optional but assigns a default value. Unlike mood, it has a scale of 6 buttons to choose the desired intensity level.
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="js/function.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.js"
+    integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+  </body>
+</html>

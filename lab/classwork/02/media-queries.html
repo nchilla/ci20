@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1">
+    <title>media queries</title>
+  <!--<link rel="stylesheet" href="style.css" type="text/css">-->
+  <style>
+    body,html{
+      height:100%;
+      margin:0;
+    }
+    div{
+      height:100%;
+    }
+    .parent{
+      display:flex;
+      flex-direction:row;
+    }
+    .item{
+      flex:1;
+    }
+    div:nth-of-type(even){
+      background-color:red;
+    }
+    div:nth-of-type(odd){
+      background-color:maroon;
+    }
+    @media (max-width:700px){
+      /* more css goes here */
+      .parent{
+        flex-direction:column;
+      }
+    }
+    @media (hover:none){
+      div:nth-of-type(odd){
+        background-color:blue;
+      }
+    }
+
+  </style>
+  
+  </head>
+
+  <body>
+    <div class='parent'>
+      <div class='item'></div>
+      <div class='item'></div>
+      <div class='item'></div>
+      <div class='item'></div>
+      <div class='item'></div>
+    </div>
+  </body>
+</html>
