@@ -123,8 +123,6 @@ function powerNew(newSet){
     d3.select('.mooddisp').style('opacity',0)
     d3.select('.outdisp').style('opacity',0)
     d3.selectAll('.powerinput').classed('white',true)
-    d3.selectAll('.nightlight').classed('white',true)
-    d3.selectAll('.nightlight').style('display','inherit')
     d3.selectAll('.hood').classed('white',true)
   }else{
     lampPow=newSet
@@ -133,8 +131,6 @@ function powerNew(newSet){
     d3.select('.mooddisp').style('opacity',1)
     d3.select('.outdisp').style('opacity',1)
     d3.selectAll('.powerinput').classed('white',false)
-    d3.selectAll('.nightlight').classed('white',false)
-    d3.selectAll('.nightlight').style('display','none')
     d3.selectAll('.hood').classed('white',false)
     console.log(newSet+' '+lampPow)
     console.log(cmood+' '+clevel)
@@ -172,6 +168,7 @@ function dropDown(){
   }
 }
 
+/*
 function nightLum(){
   if (nightlight==false){
     document.documentElement.style.setProperty('--foreground', 'white')
@@ -184,6 +181,7 @@ function nightLum(){
     dropDown()
   }
 }
+*/
 
 //credit to user RayLoveless on Stack Overflow
 if ('scrollRestoration' in history) {
