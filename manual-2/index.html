@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1">
+    <title>a lamp</title>
+    <link rel="stylesheet" href="css/clearstyle.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://use.typekit.net/ykf5zmv.css">
+  </head>
+  <body>
+    <div class='background saturate'></div>
+    <div class='empty'></div>
+    <div class='underground'>
+      <div class='panel'>
+        <div class='info'>
+          <span class='booktype inheader'>power <span onclick='dropDown()' class='accord'>+</span></span>
+          <span class='bodytype'>
+            This is the only required input to get an action out of the lamp. It is a binary switch acting as a gateway to the rest of the functions accessible to the user.
+          </span>
+        </div>
+        <div class='display ondisp'>
+          <div class='row ontext' onclick='powerNew(true)'>on</div>
+          <div class='row ontext' onclick='powerNew(false)'>off</div>
+        </div>
+      </div>
+      <div class='panel'>
+        <div class='info'>
+          <span class='booktype inheader'>intensity <span onclick='dropDown()' class='accord'>+</span></span>
+          <span class='bodytype'>
+            The 1-6 scale allows the user to pick their desired brightness level, visualized here as saturation. Before anything is selected, the lamp will opt to the highest setting by default.
+          </span>
+        </div>
+        <div class='intdisp display'></div>
+      </div>
+      <div class='panel'>
+        <div class='info'>
+          <span class='booktype inheader'>mood <span onclick='dropDown()' class='accord'>+</span></span>
+          <span class='bodytype'>
+            The lamp has five ‘mood’ options to choose from that change the color balance and hue of the lamp. Although using the mood button is not a required input, the lamp will opt for a default if it is  not actioned. Unlike intensity, you cannot specifically select a mood; you must cycle through until you reach the desired setting.
+          </span>
+        </div>
+        <div class='display mooddisp'></div>
+      </div>
+      <div class='panel'>
+        <div class='info'>
+          <span class='booktype inheader'>output <span onclick='dropDown()' class='accord'>+</span></span>
+          <span class='bodytype'>
+            Using the mood and intensity settings, the lamp banks from a reservoir of 30 possibilities to create the display output.
+          </span>
+        </div>
+        <div class='display outdisp'></div>
+      </div>
+    </div>
+
+    <div class='foreground'>
+      <div class='bigtext'><span class='levtext'>Incredibly</span><br><span class='moodtext'>Evil</span></div>
+      <div class='inputs booktype'>
+        <div class='buttons noselect'>
+          <span class='powerinput' onclick='powerToggle()'>power</span>
+          <span onclick='moodCycle()'>mood</span>
+        </div>
+        <div class='int'>
+          <span id='s0' class='scalers underline' onclick='levChange(0)'>1</span>
+          <span id='s1' class='scalers underline' onclick='levChange(1)'>2</span>
+          <span id='s2' class='scalers underline' onclick='levChange(2)'>3</span>
+          <span id='s3' class='scalers underline' onclick='levChange(3)'>4</span>
+          <span id='s4' class='scalers underline' onclick='levChange(4)'>5</span>
+          <span id='s5' class='scalers' onclick='levChange(5)'>6</span>
+        </div>
+      </div>
+    </div>
+    <div id='topbar'>
+      <span class='hood bodytype' onclick='hoodCheck()'>under the hood</span>
+      <span class='nightlight bodytype' onclick='powerToggle()'>night light</span>
+    </div>
+  </body>
+
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="function.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+</html>
