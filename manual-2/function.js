@@ -57,9 +57,11 @@ genOut()
 function hoodCheck(){
   if (fore==true){
     d3.select('.foreground').style('display','none')
+    d3.select('.hood').html('cover')
     fore=false;
   }else{
     d3.select('.foreground').style('display','flex')
+    d3.select('.hood').html('under the hood')
     fore=true;
 }
 }
@@ -170,7 +172,18 @@ function dropDown(){
   }
 }
 
-
+function nightLum(){
+  if (nightlight==false){
+    document.documentElement.style.setProperty('--foreground', 'white')
+    nightlight=true
+    dropDown()
+  }else{
+    document.documentElement.style.setProperty('--foreground', 'black')
+    nightlight=false;
+    infoDis=true;
+    dropDown()
+  }
+}
 
 //credit to user RayLoveless on Stack Overflow
 if ('scrollRestoration' in history) {
@@ -210,16 +223,8 @@ function powerButton(){
   }
 }//end of funct
 
-function nightLight(){
-  if (lampPow==false&&nightlight==false){
-    nightlight=true;
-  }else if(lampPow==false&&nightlight==true){
-    lampPow=false;
-    nightlight=false;
-  }else if(lampPow==true){
-  }
 
-}//end of funct
+
 
 function tempCycle(){
   if (lampPow==false){
