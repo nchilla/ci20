@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>keyboard</title>
+<body>
+<p id='text'></p>
+</body>
+<script>
+
+document.onkeypress=function(event){
+  console.log("key press", event.key)
+  document.querySelector('#text').innerHTML=document.querySelector('#text').innerHTML+event.key
+}
+
+document.onkeydown=function(event){
+  //everything key press gets, and more
+  console.log("key down", event.key)
+  document.querySelector('#text').innerHTML=document.querySelector('#text').innerHTML+event.key
+}
+document.onkeyup=function(event){
+  console.log("key up", event.key)
+}
+//keycode is another key inside of event where everything has a number
+</script>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<title>onclick</title>
+<body>
+  <button id='hello-button'>doo doo do do do</button>
+<script>
+
+
+  //var thing=function(){we can store functions into variables}
+  document.querySelector('#hello-button').onclick=function(){
+    var hello=document.createElement('h1')
+    hello.innerHTML='manamana'
+    document.body.appendChild(hello)
+    console.log(document.querySelector('p'))
+}
+
+</script>
+</body>

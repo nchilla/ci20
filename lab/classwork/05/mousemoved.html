@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<title>onnousemove</title>
+<style>
+  body{
+    cursor:none;
+  }
+  div{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:10px;
+    margin-left:-10px;
+    margin-top:-10px;
+    background-color:blue;
+  }
+  #cursor{
+    z-index:1;
+  }
+</style>
+<body>
+<div id='cursor'></div>
+<script>
+  var hander=function(event){
+    //mouse handler comes with info about where the mouse is
+    var div=document.createElement('div');
+    yCoord=event.clientY
+    xCoord=event.clientX
+    div.style.opacity=0.1;
+    div.style.top= yCoord+'px';
+    div.style.left=xCoord+'px';
+    document.body.appendChild(div);
+    document.querySelector('#cursor').style.top=yCoord+'px';
+    document.querySelector('#cursor').style.left=xCoord+'px';
+  }
+  document.onmousemove=hander;
+
+</script>
+</body>

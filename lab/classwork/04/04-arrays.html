@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<title>04-arrays</title>
+
+<script>
+  var fruit1='apple';
+  var fruit2='orange';
+  var fruit3='TOMATO?';
+  var fruits=[fruit1,fruit2,fruit3];
+  console.log(fruits);
+  console.log(fruits[2]);
+  //it's like a book, with page numbers. You can flip to pages of a book (array indices/index).
+//each index no. item is a variable- it has everything a variable has
+fruits[1]='CABBAGE'
+console.log(fruits[1]);
+
+fruits[3]='dragonfruit'
+console.log(fruits);
+fruits.push('coconut')
+console.log(fruits);
+//computers start counting from ZEROOoOOOOO0
+var array=[];
+array.push('hello')
+array.push(73)
+console.log(array);
+array.push(fruits)
+console.log(array);
+console.log(array[2][4])
+
+var complex=['one',13,["prince","prints","prence","prawns"]];
+console.log(complex)
+var inside=complex[2]
+console.log(inside[0])
+console.log(inside[0])
+var stringnumber='test'+7
+console.log(typeof stringnumber)
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+console.log(Math.random()*5)
+
+//push adds to the end!
+</script>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<title>03-booleans</title>
+
+<script>
+var bool= 6<3;
+var bool2= 6>3;
+console.log(bool,bool2);
+//if the thing in () is true, run the code inside teh curly braces
+if(bool){
+  console.log('tood');
+}else{
+  console.log('doot');
+}
+
+if (6>3){
+  console.log('wow')
+}
+if (6==3){
+  console.log('math broke')
+}else if (6==6){
+  console.log('praise be')
+}
+if (6=='6'){
+  console.log('== can compare numbers to strings of numbers')
+}
+//up until now, we have not done boolean algebra
+//is it friday AND is it raining?
+var day='friday'
+var weather='sun'
+if (!(day=='friday'&&weather=='rain')){
+  console.log('a true boolean statement with a NOT')
+}
+// ! means NOT, | means OR
+//if statements let us skip ahead, but not backwards
+//null and undefined are false-y values
+
+</script>

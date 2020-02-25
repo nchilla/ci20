@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>dom level 1</title>
+<body>
+  <nav>
+
+  </nav>
+<h1 class='headers' id='title'>The history of 80's rom-coms</h1>
+<h1 class='headers'>doo doo dododo</h1>
+<h1 class='headers'>manamana</h1>
+<h1 class='headers'>doo dodo doo</h1>
+<script>
+var header=document.getElementById('title');
+header.style.color='red';
+console.log(header.style);
+var headers=document.querySelectorAll(".headers")
+console.log(headers)
+console.log(headers[0])
+
+for (i=0;i<headers.length;i++){
+  headers[i].style.fontFamily='Helvetica';
+  headers[i].style.fontSize = "30px";
+}
+
+//part 2:creating elements
+var h1=document.createElement('h1');
+var text=document.createElement('p');
+h1.innerHTML='90s romcoms'
+text.innerHTML='dream meme team'
+console.log(h1)
+//dont forget to appppppend it to the page:
+document.body.appendChild(h1);
+document.querySelector('nav').appendChild(text);
+</script>
+</body>
