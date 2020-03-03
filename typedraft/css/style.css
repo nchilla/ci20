@@ -1,0 +1,97 @@
+html,body{
+  width:100%;
+  height:100%;
+  background-color: black;
+}
+
+:root{
+  --mainwidth:0;
+}
+
+#main{
+  position:fixed;
+  height:100%;
+  width:100vh;
+  left:50%;
+  margin-left:-50vh;
+  border-radius:50%;
+}
+#circles{
+  position:fixed;
+  height:100%;
+  width:100vh;
+  left:50%;
+  margin-left:-50vh;
+  border-radius:50%;
+}
+
+#typehere{
+  position:fixed;
+  top:0;
+  left:0;
+  height:20px;
+  font-family: helvetica;
+  font-size:15px;
+  line-height: 20px;
+  color:white;
+}
+.sun{
+  z-index:1;
+  width:5%;
+  height:5%;
+  position:absolute;
+  top:47.5%;
+  left:47.5%;
+  background-color: white;
+  border-radius:50%;
+}
+
+.orbit{
+  position:absolute;
+  border-radius:50%;
+}
+.orbitline{
+  position:absolute;
+  border:1px solid white;
+  border-radius:50%;
+}
+
+.sat{
+  position:absolute;
+  right:calc(var(--mainwidth)*-0.025);
+  top:calc(50% - calc(var(--mainwidth)*0.025));
+}
+.sat svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.circle{
+  border:1px white solid;
+  background-color: black;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+}
+.square{
+  border:1px white solid;
+  background-color: black;
+  width:100%;
+  height:100%;
+}
+
+
+polygon{
+  width:100%;
+  height:100%;
+  stroke:white;
+  stroke-width:1px;
+  fill:black;
+}
+
+
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
