@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>server test</title>
+  </head>
+  <body>
+
+  </body>
+  <script>
+    fetch('data.json')
+    .then(function(blob){return blob.json();})
+    .then(function(json){buildPage(json);});
+    function buildPage(data){
+      console.log(data);
+    }
+  </script>
+</html>

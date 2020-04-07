@@ -1,0 +1,5 @@
+open a terminal window
+cd into project directory
+php -S localhost:8000
+
+type localhost:8000 to get to the server address

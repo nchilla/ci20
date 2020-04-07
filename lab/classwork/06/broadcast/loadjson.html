@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>server test</title>
+  </head>
+  <body>
+
+  </body>
+  <script>
+    fetch('data.json')
+    .then(function(blob){return blob.json();})
+    .then(function(json){buildPage(json);});
+    function buildPage(data){
+      //filter checks each item for a true/false and pulls out the items that come out true
+      //entry is an object, entry is each row of the data
+      //data is unaffected by filter. course is a copy of data after it's filtered
+      var course=data.filter(function(entry){return entry.crn=='3945';})
+      console.log(course);
+    }
+  </script>
+</html>

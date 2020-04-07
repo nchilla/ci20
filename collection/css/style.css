@@ -1,0 +1,67 @@
+:root{
+  --topbarheight:100px;
+  --textwidth:50px;
+}
+
+
+html,body{
+  width:100vw;
+}
+body{
+  background-color: rgba(255,56,59,0.1)
+}
+
+
+/*top bar styles------------------------------*/
+#topbar{
+  background-color: white;
+  position:fixed;
+  z-index:1;
+  top:0;
+  left:0;
+  width:100%;
+  height:var(--topbarheight);
+  -webkit-box-shadow: 0px 10px 22px 8px rgba(255,56,59,0.62);
+  box-shadow: 0px 10px 22px 8px rgba(255,56,59,0.62);
+  /*
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  */
+}
+#sentence{
+  width:100%;
+  height:100px;
+  position:absolute;
+  bottom:0;
+  padding-left: 40px;
+  box-sizing: border-box;
+  overflow:hidden;
+}
+/*maintext------------------------------*/
+#maintext{
+  width:80%;
+  margin:auto;
+  margin-top:180px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size:18px;
+  color:rgba(255,56,59,0.6);
+  line-height:22px;
+}
+
+
+
+
+/*typography------------------------------*/
+.sentxt{
+  font-family: starling,serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size:var(--textwidth);
+  line-height: 100px;
+}
+
+#love{
+  color:rgba(255,56,59,1);
+  font-weight: 900;
+  font-style: italic;
+}

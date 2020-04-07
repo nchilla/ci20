@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1">
+    <title>Shakespeare's Sonnets</title>
+    <link rel="stylesheet" href="css/clearstyle.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://use.typekit.net/wla2vsh.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  </head>
+  <script>
+    // for fetch to work we need a server
+    var allsonnets;
+    fetch("sonnets.json")
+      .then(function(sonnets){ return sonnets.json(); })
+      .then(function(json){ buildBody(json); });
+
+  </script>
+  <body>
+    <div id='topbar'>
+      <div id='sentence'><span class='sentxt'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
+    </div>
+    <div id='maintext'></div>
+  </body>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-ui.min.js"></script>
+  <script src="js/function.js"></script>
+</html>

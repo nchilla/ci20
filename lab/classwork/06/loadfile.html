@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <!--boiler plate for loading files-->
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type='file'>0
+  </body>
+  <script src='converter.js'></script>
+  <script>
+    //opens the file and converts into a string
+    document.querySelectorAll("input")[0].onchange=function(event){
+      //function that gets called by the browser when you upload a file to the input area
+      var file=event.target.files[0];
+      var reader=new FileReader();
+      reader.readAsText(file,"UTF-8");
+      reader.onload=function(readerEvent){
+        didLoad(readerEvent.target.result);
+      };
+    };
+    //file has finished loading, as is convereted into one string
+    function didLoad(text){
+      console.log(text)
+    }
+  </script>
+</html>
