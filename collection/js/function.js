@@ -14,6 +14,13 @@ function buildBody(data){
     }
     d3.select('#maintext').select('.sonnet'+currentson).append('span').html(' '+allsonnets[i].line+' ');
   }
+  /*
+  d3.select('#maintext')
+  .transition()
+  .duration(1000)
+  .ease(d3.easeQuadInOut)
+  .style('line-height','32px');
+  */
 }
 
 
