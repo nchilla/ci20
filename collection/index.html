@@ -17,7 +17,7 @@
   <script>
     var allsonnets;
     fetch("sonnets.json")
-      .then(function(sonnets){ return sonnets.json(); })
+      .then(function(sonnets){ return sonnets.text(); })
       .then(function(json){ buildBody(json); });
   </script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
