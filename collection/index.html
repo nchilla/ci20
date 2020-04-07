@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="https://use.typekit.net/wla2vsh.css">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
   </head>
-  <script>
-    // for fetch to work we need a server
-    var allsonnets;
-    fetch("sonnets.json")
-      .then(function(sonnets){ return sonnets.json(); })
-      .then(function(json){ buildBody(json); });
-
-  </script>
   <body>
+    <script>
+      // for fetch to work we need a server
+      var allsonnets;
+      fetch("sonnets.json")
+        .then(function(sonnets){ return sonnets.json(); })
+        .then(function(json){ buildBody(json); });
+
+    </script>
     <div id='topbar'>
       <div id='sentence'><span class='sentxt'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
     </div>
