@@ -7,21 +7,21 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="https://use.typekit.net/wla2vsh.css">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/ico" sizes="96x96">
   </head>
   <body>
+    <div id='topbar'>
+      <div id='sentence'><span class='sentxt noselect'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
+    </div>
+    <div id='maintext'></div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/function.js"></script>
     <script>
-      var allsonnets;
       fetch("sonnets.json")
         .then(function(sonnets){ return sonnets.json(); })
         .then(function(json){ buildBody(json); });
     </script>
-    <div id='topbar'>
-      <div id='sentence'><span class='sentxt'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
-    </div>
-    <div id='maintext'></div>
   </body>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/jquery-ui.min.js"></script>
-  <script src="js/function.js"></script>
 </html>

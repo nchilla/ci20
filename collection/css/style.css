@@ -8,7 +8,7 @@ html,body{
   width:100vw;
 }
 body{
-  background-color: rgba(255,56,59,0.1)
+  /* background-color: rgba(255,56,59,0.1); */
 }
 
 
@@ -30,7 +30,7 @@ body{
 }
 #sentence{
   width:100%;
-  height:100px;
+  min-height:100px;
   position:absolute;
   bottom:0;
   padding-left: 40px;
@@ -42,16 +42,36 @@ body{
   width:80%;
   margin:auto;
   margin-top:180px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size:18px;
-  color:rgba(255,56,59,0.6);
   line-height:32px;
+}
+#selected{
+  display:block;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  color:rgba(255,56,59,1);
+}
+#selected span{
+  display:block;
+}
+#selected:hover{
+  cursor:default;
+}
+#selected .line4,.line8,.line12{
+  margin-bottom:20px;
+}
+#selected .line13,.line14{
+  text-indent: 20px;
 }
 
 
-
-
 /*typography------------------------------*/
+.sonnet{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size:18px;
+  color:rgba(255,56,59,0.5);
+  transition: color 0.3s;
+  cursor:default;
+}
 .sentxt{
   font-family: starling,serif;
   font-weight: 400;
@@ -64,4 +84,31 @@ body{
   color:rgba(255,56,59,1);
   font-weight: 900;
   font-style: italic;
+}
+.heart{
+  color:rgba(255,56,59,1);
+}
+/* animations------------------------------ */
+@keyframes fadein {
+  from {
+    color:rgba(255,56,59,0.5);
+  }
+  to {
+    color:rgba(255,56,59,1);
+  }
+}
+
+
+
+/*media stuff------------------------------*/
+@media(hover:hover){
+  .sonnet:hover{
+    color:rgba(255,56,59,1);
+    cursor:default;
+  }
+}
+@media(max-width:700px){
+  .sonnet{
+    /* font-size:15px; */
+  }
 }
