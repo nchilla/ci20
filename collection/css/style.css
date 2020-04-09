@@ -29,6 +29,7 @@ body{
   */
 }
 #sentence{
+  color:black/*rgba(25, 63, 255, 0.5)*/;
   width:100%;
   min-height:100px;
   position:absolute;
@@ -49,6 +50,7 @@ body{
   margin-top: 40px;
   margin-bottom: 40px;
   color:rgba(255,56,59,1);
+  margin-left:40px;
 }
 #selected span{
   display:block;
