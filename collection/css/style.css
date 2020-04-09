@@ -31,7 +31,7 @@ body{
 #sentence{
   color:black/*rgba(25, 63, 255, 0.5)*/;
   width:100%;
-  min-height:100px;
+  min-height:var(--topbarheight);
   position:absolute;
   bottom:0;
   padding-left: 40px;
@@ -110,7 +110,10 @@ body{
   }
 }
 @media(max-width:700px){
-  .sonnet{
-    /* font-size:15px; */
+  #maintext{
+    width:90%;
   }
+  /* .sonnet{
+    font-size:16px;
+  } */
 }
