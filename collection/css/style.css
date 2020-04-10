@@ -1,6 +1,5 @@
 :root{
   --topbarheight:100px;
-  --textwidth:50px;
 }
 
 
@@ -30,13 +29,31 @@ body{
 }
 #sentence{
   color:black/*rgba(25, 63, 255, 0.5)*/;
-  width:100%;
-  min-height:var(--topbarheight);
+  width:calc(100% - 80px);
+  height:var(--topbarheight);
   position:absolute;
   bottom:0;
+  left:0;
   padding-left: 40px;
+  padding-top: 20px;
   box-sizing: border-box;
-  overflow:hidden;
+  overflow:scroll;
+}
+#arrow{
+  cursor:pointer;
+  font-size:55px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  line-height: 100px;
+  color:rgba(255,56,59,1);
+  position:absolute;
+  bottom:0;
+  right:0;
+  padding-right: 40px;
+  box-sizing: border-box;
+  text-align: right;
+  width:80px;
+  height:100px;
 }
 /*maintext------------------------------*/
 #maintext{
@@ -67,6 +84,7 @@ body{
 
 
 /*typography------------------------------*/
+
 .sonnet{
   font-family: 'IBM Plex Mono', monospace;
   font-size:18px;
@@ -75,14 +93,24 @@ body{
   cursor:default;
 }
 .sentxt{
-  font-family: starling,serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size:var(--textwidth);
-  line-height: 100px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+}
+.oneline{
+  font-size:55px;
+  white-space: nowrap;
+}
+.twolines{
+  font-size:30px;
+  font-weight: 300;
+}
+.threelines{
+  font-size:20px;
 }
 
+
 #love{
+  font-family: starling,serif;
   color:rgba(255,56,59,1);
   font-weight: 900;
   font-style: italic;
@@ -111,7 +139,14 @@ body{
 }
 @media(max-width:700px){
   #maintext{
-    width:90%;
+    width:calc(100% - 40px);
+    margin-top:140px;
+  }
+  #sentence{
+    padding-left:20px;
+  }
+  #arrow{
+    padding-right: 20px;
   }
   /* .sonnet{
     font-size:16px;

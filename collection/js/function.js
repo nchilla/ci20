@@ -2,6 +2,7 @@ var root=document.documentElement;
 var colH=100;
 var senlngth=3;
 var allsonnets;
+var blinds=false;
 
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
@@ -19,6 +20,7 @@ function buildBody(data){
     currentline++;
   }
   poemExp();
+  sentenceBreak();
   /*
   d3.select('#maintext')
   .transition()
@@ -34,6 +36,15 @@ function buildBody(data){
 //top bar--------------------------------------------------------
 var topbar=document.querySelector('#topbar');
 topbar.addEventListener("mouseenter", function(event){
+  lowerBlinds();
+});
+
+topbar.addEventListener("mouseleave", function(event){
+  raiseBlinds();
+});
+
+
+function lowerBlinds(){
   var currentH=$('#topbar').height();
   var winHs=window.innerHeight*0.5;
   if(winHs<300){
@@ -46,9 +57,12 @@ topbar.addEventListener("mouseenter", function(event){
   .duration(slidetime)
   .ease(d3.easePolyIn)
   .style('height',portion);
-});
+  d3.select('#arrow').html('↑');
+  blinds=true;
+}
 
-topbar.addEventListener("mouseleave", function(event){
+
+function raiseBlinds(){
   var currentH=$('#topbar').height();
   var winH=window.innerHeight;
   var slidetime=Math.abs(colH-currentH);
@@ -57,7 +71,19 @@ topbar.addEventListener("mouseleave", function(event){
   .duration(slidetime)
   .ease(d3.easePolyIn)
   .style('height',colH+'px');
-});
+  d3.select('#arrow').html('↓');
+  blinds=false;
+}
+
+function blindsTog(){
+  if(blinds==false){
+    lowerBlinds();
+  }else{
+    raiseBlinds();
+  }
+}
+
+
 //poem expand interface--------------------------------------------------------
 function poemExp(){
   sonnets=document.querySelectorAll('.sonnet')
@@ -85,9 +111,37 @@ function scrollControl(behave){
   }
 }
 
+function sentenceBreak(){
+  var sent=d3.select('.sentxt');
+  var senW=document.querySelector('.sentxt').getBoundingClientRect().width;
+  var senH=document.querySelector('.sentxt').getBoundingClientRect().height;
+  var screenW=document.querySelector('#sentence').getBoundingClientRect().width;
+  d3.select('#sentence').style('padding-top','20px');
+
+  if (sent.classed('oneline')==false){
+    d3.select('.sentxt').attr('class','sentxt oneline noselect');
+    senW=document.querySelector('.sentxt').getBoundingClientRect().width;
+  }
+  if(senW>screenW){
+    d3.select('.sentxt').attr('class','sentxt twolines noselect');
+    senW=document.querySelector('.sentxt').getBoundingClientRect().width;
+    senH=document.querySelector('.sentxt').getBoundingClientRect().height;
+  }
+  var twolines=sent.classed('twolines')==true;
+  if (twolines&&senH>colH){
+    d3.select('.sentxt').attr('class','sentxt threelines noselect');
+  }else if(twolines && senH<50){
+    d3.select('#sentence').style('padding-top','40px');
+  }
+
+}//end of sentence break
+
+
+
 
 function resizing(){
   scrollControl('auto');
+  sentenceBreak();
 }
 /*
 function scaleTests(){
