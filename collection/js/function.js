@@ -3,6 +3,7 @@ var colH=100;
 var senlngth=3;
 var allsonnets;
 var blinds=false;
+var rhymeCount=[];
 
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
@@ -16,9 +17,11 @@ function buildBody(data){
       currentline=1;
       d3.select('#maintext').append('span').classed('sonnet',true).classed('sonnet'+currentson,true).append('span').classed('heart',true).html('❤'+currentson+' ');
     }
-    d3.select('#maintext').select('.sonnet'+currentson).append('span').html(' '+allsonnets[i].line+' ').classed('line'+currentline,true);
+    d3.select('#maintext').select('.sonnet'+currentson).append('span').html(' '+allsonnets[i].line+' ').classed('line',true).classed('line'+currentline,true);
     currentline++;
   }
+  d3.selectAll('.line').data(allsonnets);
+  rhymeCheck();
   poemExp();
   sentenceBreak();
   /*
@@ -30,6 +33,34 @@ function buildBody(data){
   */
 }
 
+
+function rhymeCheck(){
+  for(var l=0;l<allsonnets.length;l++){
+    var rhyme=allsonnets[l].rhyme;
+    //for each rhyme in list
+    for(var x=0; x<rhyme.length;x++){
+      var exists = (element) => element.r==rhyme[x];
+      if(rhymeCount.some(exists)){
+        rhymeCount[rhymeCount.findIndex(exists)].c=rhymeCount[rhymeCount.findIndex(exists)].c+1;
+      }else{
+        rhymeCount.push({r:rhyme[x],c:1});
+      }
+    }//end of x loop
+  }//end of l loop
+  rhymeCount=rhymeCount.sort(function(a,b){return b.c-a.c;});
+  for(var l=0;l<allsonnets.length;l++){
+    rhymeHandle(l);
+  }
+}
+
+function rhymeHandle(ind){
+    line=allsonnets[ind];
+    var r0=line.rhyme[0];
+    var exists = (element) => element.r==r0;
+    if(rhymeCount.find(exists).c>4){
+      d3.selectAll('.line').filter(function(d, i){return i==ind;}).append('span').attr('class','sw').html(' ⇄');
+    };
+};
 
 
 
@@ -88,12 +119,15 @@ function blindsTog(){
 function poemExp(){
   sonnets=document.querySelectorAll('.sonnet')
   for (var i=0; i<sonnets.length;i++){
-      sonnets[i].addEventListener("mousedown", function(event){
+      sonnets[i].addEventListener("click", function(event){
+      var selected=d3.select(event.currentTarget);
+      // if (selected.attr('id')=='maintext'){
+      //   selected=d3.select(event.srcElement);
+      // }else if(selected.classed('line')){
+      //   return;
+      //   console.log('test');
+      // }
       d3.select('#maintext').selectAll('#selected').attr('id','');
-      var selected=d3.select(event.srcElement.parentNode);
-      if (selected.attr('id')=='maintext'){
-        selected=d3.select(event.srcElement);
-      }
       selected.attr('id','selected');
       scrollControl('smooth');
       // document.querySelector('#selected').scrollIntoView({block:'end',behavior: 'smooth'});

@@ -31,14 +31,19 @@
         //a second loop loops over the entries in the array
         //and puts them into this object
         for (var j=0; j<row.length;j++){
-          row[j]=row[j].replace('@',',');
+          //this while loop replaces all @s with commas hopefully
+          while(row[j].indexOf('@')!==-1){
+            row[j]=row[j].replace('@',',');
+          }
           var key=header[j];
           object[key]=row[j];
         }
         json.push(object);
       }
-      console.log(json);
-      console.log(json[3].crn);
+      for(var x=0;x<json.length;x++){
+        json[x].rhyme=json[x].rhyme.split(',');
+        console.log(json[x].rhyme);
+      }
       download(json,"data-json");
     }
     function download(data,filename){

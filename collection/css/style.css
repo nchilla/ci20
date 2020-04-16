@@ -82,6 +82,10 @@ body{
   text-indent: 20px;
 }
 
+#selected .sw{
+  display:inline;
+}
+
 
 /*typography------------------------------*/
 
@@ -118,6 +122,11 @@ body{
 .heart{
   color:rgba(255,56,59,1);
 }
+.sw{
+  display:none;
+}
+
+
 /* animations------------------------------ */
 @keyframes fadein {
   from {
