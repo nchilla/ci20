@@ -1,14 +1,41 @@
 :root{
   --topbarheight:100px;
+  --defaultmouse:none;
+  --rnum:255,56,59;
+  cursor: var(--defaultmouse);
 }
 
 
 html,body{
   width:100vw;
+  cursor: var(--defaultmouse);
 }
 body{
   /* background-color: rgba(255,56,59,0.1); */
 }
+
+br{
+  display:none;
+}
+
+#mycursor{
+  margin-top:-22px;
+  position:fixed;
+  width:100px;
+  height:100px;
+  z-index:1000;
+  pointer-events:none
+}
+#cicon{
+  font-size:40px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  line-height: 20px;
+  transform-origin: center;
+  display:inline-block;
+  transform:rotate(90deg);
+  color:black;
+}
+
 
 
 /*top bar styles------------------------------*/
@@ -57,7 +84,7 @@ body{
 }
 /*maintext------------------------------*/
 #maintext{
-  width:80%;
+  width:calc(100% - 80px);
   margin:auto;
   margin-top:180px;
   line-height:32px;
@@ -66,35 +93,48 @@ body{
   display:block;
   margin-top: 40px;
   margin-bottom: 40px;
-  color:rgba(255,56,59,1);
-  margin-left:40px;
+  color:rgba(var(--rnum),1);
+  opacity:1;
+  text-indent: 40px;
 }
 #selected span{
-  display:block;
+  display:inline-block;
 }
 #selected:hover{
-  cursor:default;
+  cursor: var(--defaultmouse);
 }
 #selected .line4,.line8,.line12{
   margin-bottom:20px;
 }
 #selected .line13,.line14{
-  text-indent: 20px;
+  text-indent: 60px;
 }
-
 #selected .sw{
+  background-color: inherit;
   display:inline;
 }
-
+#selected .changeable:hover{
+  background-color:rgba(235, 255, 91, 0.29);
+}
+#selected br{
+  display:inherit;
+}
 
 /*typography------------------------------*/
 
 .sonnet{
   font-family: 'IBM Plex Mono', monospace;
   font-size:18px;
-  color:rgba(255,56,59,0.5);
-  transition: color 0.3s;
-  cursor:default;
+  font-weight: 300;
+  color:rgba(var(--rnum),1);
+  opacity:0.5;
+  transition:opacity 0.3s,background-color 0.3s;
+  cursor: var(--defaultmouse);
+}
+.sonnet div{
+  display:inline;
+  text-decoration:underline white;
+  background-color: inherit;
 }
 .sentxt{
   font-family: 'IBM Plex Sans', sans-serif;
@@ -112,6 +152,10 @@ body{
   font-size:20px;
 }
 
+.changeable{
+  background-color: inherit;
+  transition: background-color 0.3s;
+}
 
 #love{
   font-family: starling,serif;
@@ -121,9 +165,19 @@ body{
 }
 .heart{
   color:rgba(255,56,59,1);
+  text-indent: 0px;
 }
 .sw{
   display:none;
+  text-decoration:underline white;
+}
+.label{
+  display:inline;
+}
+
+
+.changed{
+  text-decoration: underline rgba(34, 10, 255, 0.5);
 }
 
 
@@ -141,10 +195,19 @@ body{
 
 /*media stuff------------------------------*/
 @media(hover:hover){
-  .sonnet:hover{
-    color:rgba(255,56,59,1);
-    cursor:default;
+  #selected:hover{
+    background-color: inherit;
   }
+  #selected .sw{
+    background-color: inherit;
+    display:none;
+  }
+  .sonnet:hover{
+    background-color:rgba(235, 255, 91, 0.29);
+    opacity:1;
+    cursor: var(--defaultmouse);
+  }
+
 }
 @media(max-width:700px){
   #maintext{

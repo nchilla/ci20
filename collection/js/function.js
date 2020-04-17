@@ -1,42 +1,37 @@
 var root=document.documentElement;
 var colH=100;
 var senlngth=3;
-var allsonnets;
+//will store the original organization permanently so it can be reset
+var origin;
+//this is the working list of sonnet data that's adjusted when you switch out lines by rhyme
+var allson;
 var blinds=false;
 var rhymeCount=[];
 
+
+
+
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
-  allsonnets=data;
+  if (origin!==undefined){
+    origin=data;
+  }
+  allson=data;
   var currentson=0;
   var curline=1;
-  for(var i=0;i<allsonnets.length;i++){
-    if(currentson==allsonnets[i].sonnet){
+  for(var i=0;i<allson.length;i++){
+    if(currentson==allson[i].sonnet){
     }else{
       currentson++;
       currentline=1;
       d3.select('#maintext').append('span').classed('sonnet',true).classed('sonnet'+currentson,true).append('span').classed('heart',true).html('❤'+currentson+' ');
+      d3.select('#maintext').select('.sonnet'+currentson).append('br');
     }
-    d3.select('#maintext').select('.sonnet'+currentson).append('span').html(' '+allsonnets[i].line+' ').classed('line',true).classed('line'+currentline,true);
+    d3.select('#maintext').select('.sonnet'+currentson).append('span').classed('line',true).classed('line'+currentline,true);
+    d3.select('#maintext').select('.sonnet'+currentson).append('br');
+    allson[i].num=currentline;
     currentline++;
-  }
-  d3.selectAll('.line').data(allsonnets);
-  rhymeCheck();
-  poemExp();
-  sentenceBreak();
-  /*
-  d3.select('#maintext')
-  .transition()
-  .duration(1000)
-  .ease(d3.easeQuadInOut)
-  .style('line-height','32px');
-  */
-}
-
-
-function rhymeCheck(){
-  for(var l=0;l<allsonnets.length;l++){
-    var rhyme=allsonnets[l].rhyme;
+    var rhyme=allson[i].rhyme;
     //for each rhyme in list
     for(var x=0; x<rhyme.length;x++){
       var exists = (element) => element.r==rhyme[x];
@@ -46,33 +41,120 @@ function rhymeCheck(){
         rhymeCount.push({r:rhyme[x],c:1});
       }
     }//end of x loop
-  }//end of l loop
-  rhymeCount=rhymeCount.sort(function(a,b){return b.c-a.c;});
-  for(var l=0;l<allsonnets.length;l++){
-    rhymeHandle(l);
   }
+
+  d3.selectAll('.line')
+  .data(allson)
+  .join(
+    enter => enter.append("text").text(function(d) { return ' '+d.line+' '; }),
+    update => update.append("text").text(function(d) { return ' '+d.line+' '; })
+  )
+  rhymeCheck();
+
+
+
+  poemExp();
+  sentenceBreak();
+}//end of buildBody
+
+function rhymeCheck(){
+  rhymeCount=rhymeCount.sort(function(a,b){return b.c-a.c;});
+  for(var x=0;x<allson.length;x++){
+    canRhyme(x);
+  }
+}
+function canRhyme(ind){
+  //this function decides whether a given line has enough rhymes to be given a switcher
+  line=allson[ind];
+  var r0=line.rhyme[0];
+  var exists = (element) => element.r==r0;
+  if(rhymeCount.find(exists).c>4){
+    allson[ind].cr=true;
+  }else{
+    allson[ind].cr=false;
+  }
+  rhymeHandle(ind);
 }
 
 function rhymeHandle(ind){
-    line=allsonnets[ind];
-    var r0=line.rhyme[0];
-    var exists = (element) => element.r==r0;
-    if(rhymeCount.find(exists).c>4){
-      d3.selectAll('.line').filter(function(d, i){return i==ind;}).append('span').attr('class','sw').html(' ⇄');
+    line=d3.selectAll('.line').filter(function(d, i){return i==ind;});
+    if(allson[ind].cr==true){
+      line
+      .append('span')
+      .attr('class','sw')
+      .classed('changeable',true)
+      .html(' ⇄')
+      .on('click',function(info){switchLine(info)});
+      line
+      .on('click',function(info){
+        if(d3.select(event.currentTarget.parentNode).attr('id')=='selected'){
+          switchLine(info)}//end of if
+        }
+      )
+      .classed('changeable',true);
+    }else{
+      line
+      .on('mouseenter',null)
+      .on('mouseleave',null);
     };
-};
 
+};
+function switchLine(info){
+  //this is the switch-out function
+  //first step is find all the lines that share a rhyme with the clicked line
+  //i might change it so that it only searches for matches with the first index rhyme
+  var rhymes=info.rhyme;
+
+  var search=[];
+  var samerhyme = (element)=>element.rhyme.some(r=>rhymes.indexOf(r)>= 0)&&!search.includes(allson.indexOf(element));
+  while(allson.findIndex(samerhyme)!==-1){
+    var newInd=allson.findIndex(samerhyme);
+    search.push(newInd);
+  }
+  var cIndex=allson.indexOf(info);
+  search.splice(search.indexOf(cIndex),1);
+  //now it picks one rhyme from the list at random
+  var pick=search[Math.floor(Math.random()*search.length)];
+  [allson[cIndex], allson[pick]] = [allson[pick], allson[cIndex]];
+  //now it updates the dom
+  updateLine(cIndex);
+  updateLine(pick);
+}
+
+function updateLine(index){
+  wArray=d3.selectAll('.line').data(allson).filter(function(d,i){return i==index});
+  wArray.join('text')
+  .text(function(d) { return d.line+' '; })
+  .classed('changed',true);
+  wArray.append('div').html(' — '+allson[index].sonnet+':'+allson[index].num).classed('label',true);
+  rhymeHandle(index);
+}
 
 
 //top bar--------------------------------------------------------
 var topbar=document.querySelector('#topbar');
-topbar.addEventListener("mouseenter", function(event){
-  lowerBlinds();
-});
+if(!window.matchMedia("(hover: none)").matches){
+  var cursorTrack=function(event){
+    //mouse handler comes with info about where the mouse is
+    yCoord=event.clientY
+    xCoord=event.clientX
+    document.querySelector('#mycursor').style.top=yCoord+'px';
+    document.querySelector('#mycursor').style.left=xCoord+'px';
+  }
+  document.onmousemove=cursorTrack;
 
-topbar.addEventListener("mouseleave", function(event){
-  raiseBlinds();
-});
+
+  topbar.addEventListener("mouseenter", function(event){
+    lowerBlinds();
+    // document.querySelector('#cicon').innerHTML='✎';
+  });
+
+  topbar.addEventListener("mouseleave", function(event){
+    raiseBlinds();
+    // document.querySelector('#cicon').innerHTML='✍';
+  });
+}
+
 
 
 function lowerBlinds(){
@@ -133,9 +215,14 @@ function poemExp(){
       // document.querySelector('#selected').scrollIntoView({block:'end',behavior: 'smooth'});
     });
   }
-
-
 }//end of poemexp
+
+
+
+
+
+
+
 
 function scrollControl(behave){
   behave
