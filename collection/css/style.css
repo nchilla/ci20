@@ -1,7 +1,8 @@
 :root{
-  --topbarheight:100px;
+  --topbarheight:140px;
   --defaultmouse:none;
   --rnum:255,56,59;
+  --control:40px;
   cursor: var(--defaultmouse);
 }
 
@@ -31,7 +32,7 @@ br{
   font-family: 'IBM Plex Sans', sans-serif;
   line-height: 20px;
   transform-origin: center;
-  display:inline-block;
+  display:none;
   transform:rotate(90deg);
   color:black;
 }
@@ -54,43 +55,133 @@ br{
   -webkit-backdrop-filter: blur(10px);
   */
 }
-#sentence{
-  color:black/*rgba(25, 63, 255, 0.5)*/;
-  width:calc(100% - 80px);
-  height:var(--topbarheight);
-  position:absolute;
+#botbar{
+  background-color: white;
+  z-index:2;
+  position:fixed;
+  height:var(--control);
   bottom:0;
   left:0;
+  -webkit-box-shadow: 0px -10px 22px 8px rgba(255,56,59,0.62);
+  box-shadow: 0px -10px 22px 8px rgba(255,56,59,0.62);
+  width:100%;
+}
+#botbar .scale{
+  width:300px;
+  left:calc(50% - 150px);
+}
+
+#sentence{
+  color:black/*rgba(25, 63, 255, 0.5)*/;
+  width:100%;
+  height:calc(var(--topbarheight) - var(--control));
+  position:absolute;
+  bottom:var(--control);
+  left:0;
   padding-left: 40px;
-  padding-top: 20px;
+  padding-top: 30px;
   box-sizing: border-box;
   overflow:scroll;
+  border-bottom: 1px solid rgba(255,56,59,1);
 }
-#arrow{
-  cursor:pointer;
-  font-size:55px;
+#toggle{
+  height:40px;
+  width: 100%;
+  position:absolute;
+  bottom:0px;
+  left:0px;
+}
+
+#topbar,#botbar div{
   font-family: 'IBM Plex Sans', sans-serif;
-  font-weight: 300;
-  line-height: 100px;
+  font-weight: 400;
+  line-height:var(--control);
+  font-size:16px;
   color:rgba(255,56,59,1);
+}
+
+#arrow{
+  width:200px;
+  right:20px;
+  text-align: right;
+  height:var(--control);
   position:absolute;
   bottom:0;
-  right:0;
-  padding-right: 40px;
   box-sizing: border-box;
-  text-align: right;
-  width:80px;
-  height:100px;
 }
+#arrow::before{
+  content:'Filter ';
+  font-style: italic;
+}
+.counter{
+  position:absolute;
+  bottom:0;
+  left:40px;
+  height:var(--control);
+  box-sizing: border-box;
+}
+.counter span{
+  color:black;
+}
+.counter::after{
+  content:'/2157 lines selected';
+  font-style: italic;
+}
+.scale{
+  height:var(--control);
+  position:absolute;
+  top:0;
+}
+.scale::before{
+  content:'View: ';
+  font-style: italic;
+}
+.scale span{
+  color: rgba(255,56,59,0.5);
+  transition:color 0.3s;
+}
+.cview{
+  color:rgba(255,56,59,1) !important;
+}
+
+
 /*maintext------------------------------*/
 #maintext{
   width:calc(100% - 80px);
   margin:auto;
-  margin-top:180px;
+  margin-top:170px;
+  transition:font-size 0.5s;
+}
+.smlsize{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size:10px;
+  line-height:12px;
+  font-weight: 400;
+}
+.medsize{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size:18px;
+  font-weight: 300;
   line-height:32px;
 }
+.lrgsize{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size:30px;
+  font-weight: 300;
+  line-height:45px;
+}
+
+
+
+
+
+
+
+
 #selected{
   display:block;
+  border-right:1px solid rgba(var(--rnum),1);
+  overflow:scroll;
   margin-top: 40px;
   margin-bottom: 40px;
   color:rgba(var(--rnum),1);
@@ -99,10 +190,9 @@ br{
 }
 #selected span{
   display:inline-block;
+  white-space: nowrap;
 }
-#selected:hover{
-  cursor: var(--defaultmouse);
-}
+
 #selected .line4,.line8,.line12{
   margin-bottom:20px;
 }
@@ -113,9 +203,7 @@ br{
   background-color: inherit;
   display:inline;
 }
-#selected .changeable:hover{
-  background-color:rgba(235, 255, 91, 0.29);
-}
+
 #selected br{
   display:inherit;
 }
@@ -123,9 +211,6 @@ br{
 /*typography------------------------------*/
 
 .sonnet{
-  font-family: 'IBM Plex Mono', monospace;
-  font-size:18px;
-  font-weight: 300;
   color:rgba(var(--rnum),1);
   opacity:0.5;
   transition:opacity 0.3s,background-color 0.3s;
@@ -195,6 +280,12 @@ br{
 
 /*media stuff------------------------------*/
 @media(hover:hover){
+  #selected .changeable:hover{
+    background-color:rgba(235, 255, 91, 0.29);
+  }
+  #cicon{
+    display: inline-block;
+  }
   #selected:hover{
     background-color: inherit;
   }
@@ -207,18 +298,32 @@ br{
     opacity:1;
     cursor: var(--defaultmouse);
   }
+  #selected:hover{
+    cursor: var(--defaultmouse);
+  }
+  .scale span:hover{
+    color:rgba(255,56,59,1);
+  }
 
 }
 @media(max-width:700px){
   #maintext{
     width:calc(100% - 40px);
-    margin-top:140px;
+    margin-top:170px;
   }
   #sentence{
     padding-left:20px;
   }
-  #arrow{
-    padding-right: 20px;
+
+  .counter{
+    left:20px;
+  }
+  .counter::after{
+    content:'/2157 selected';
+    font-style: italic;
+  }
+  #botbar{
+    display:block;
   }
   /* .sonnet{
     font-size:16px;

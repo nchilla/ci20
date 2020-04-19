@@ -17,9 +17,15 @@
     </div>
     <div id='topbar'>
       <div id='sentence'><span class='sentxt oneline noselect'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
-      <div id='arrow' class='noselect' onclick='blindsTog();'>↓</div>
+      <div id='toggle'>
+        <div class='counter'><span>1560</span></div>
+        <div id='arrow' class='noselect' onclick='blindsTog();'>↓↓↓</div>
+      </div>
     </div>
-    <div id='maintext'></div>
+    <div id='botbar'>
+      <div class='scale'><span class='sml'>birds-eye</span> | <span class='med cview'>standard</span> | <span class='lrg'>close-up</span></div>
+    </div>
+    <div id='maintext'class='medsize'></div>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>

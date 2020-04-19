@@ -1,5 +1,5 @@
 var root=document.documentElement;
-var colH=100;
+var colH=140;
 var senlngth=3;
 //will store the original organization permanently so it can be reset
 var origin;
@@ -7,6 +7,7 @@ var origin;
 var allson;
 var blinds=false;
 var rhymeCount=[];
+var cview='med';
 
 
 
@@ -85,13 +86,15 @@ function rhymeHandle(ind){
       .classed('changeable',true)
       .html(' ⇄')
       .on('click',function(info){switchLine(info)});
-      line
-      .on('click',function(info){
-        if(d3.select(event.currentTarget.parentNode).attr('id')=='selected'){
-          switchLine(info)}//end of if
-        }
-      )
-      .classed('changeable',true);
+      if(!window.matchMedia("(hover: none)").matches){
+        line
+        .on('click',function(info){
+          if(d3.select(event.currentTarget.parentNode).attr('id')=='selected'){
+            switchLine(info)}//end of if
+          }
+        )
+        .classed('changeable',true);
+      }
     }else{
       line
       .on('mouseenter',null)
@@ -155,6 +158,23 @@ if(!window.matchMedia("(hover: none)").matches){
   });
 }
 
+d3.selectAll('.scale span').on('click',function(event){
+  var butclass=d3.event.currentTarget.className.slice(0,3);
+  if(butclass!==cview){
+    d3.selectAll('.'+cview).classed('cview',false);
+    d3.selectAll('.'+butclass).classed('cview',true);
+    cview=butclass;
+    changeScale(cview);
+  }
+});
+
+function changeScale(scale){
+  d3.select('#maintext')
+  .attr('class','')
+  .classed(scale+'size',true);
+  scrollControl('auto');
+  setTimeout(function(){scrollControl('auto')},510);
+};
 
 
 function lowerBlinds(){
@@ -170,7 +190,7 @@ function lowerBlinds(){
   .duration(slidetime)
   .ease(d3.easePolyIn)
   .style('height',portion);
-  d3.select('#arrow').html('↑');
+  d3.select('#arrow').html('↑↑↑');
   blinds=true;
 }
 
@@ -184,7 +204,7 @@ function raiseBlinds(){
   .duration(slidetime)
   .ease(d3.easePolyIn)
   .style('height',colH+'px');
-  d3.select('#arrow').html('↓');
+  d3.select('#arrow').html('↓↓↓');
   blinds=false;
 }
 
@@ -211,7 +231,12 @@ function poemExp(){
       // }
       d3.select('#maintext').selectAll('#selected').attr('id','');
       selected.attr('id','selected');
-      scrollControl('smooth');
+      var source=event.srcElement.parentNode;
+      if(source!==null&&!source.className.includes('sonnet')){
+        console.log(event.srcElement.parentNode);
+        scrollControl('smooth');
+      }
+
       // document.querySelector('#selected').scrollIntoView({block:'end',behavior: 'smooth'});
     });
   }
@@ -225,9 +250,9 @@ function poemExp(){
 
 
 function scrollControl(behave){
-  behave
   if(d3.select('#selected')._groups[0][0]!==null){
     var windowRel=document.querySelector('#selected').getBoundingClientRect().y-(colH+50);
+    console.log(windowRel);
     window.scroll({top:window.scrollY+windowRel,behavior:behave});
   }
 }
@@ -237,22 +262,25 @@ function sentenceBreak(){
   var senW=document.querySelector('.sentxt').getBoundingClientRect().width;
   var senH=document.querySelector('.sentxt').getBoundingClientRect().height;
   var screenW=document.querySelector('#sentence').getBoundingClientRect().width;
-  d3.select('#sentence').style('padding-top','20px');
+    d3.select('#sentence').style('padding-top','30px');
 
   if (sent.classed('oneline')==false){
     d3.select('.sentxt').attr('class','sentxt oneline noselect');
     senW=document.querySelector('.sentxt').getBoundingClientRect().width;
+    d3.select('#sentence').style('padding-top','30px');
   }
   if(senW>screenW){
     d3.select('.sentxt').attr('class','sentxt twolines noselect');
     senW=document.querySelector('.sentxt').getBoundingClientRect().width;
     senH=document.querySelector('.sentxt').getBoundingClientRect().height;
+    d3.select('#sentence').style('padding-top','20px');
   }
   var twolines=sent.classed('twolines')==true;
   if (twolines&&senH>colH){
     d3.select('.sentxt').attr('class','sentxt threelines noselect');
+    d3.select('#sentence').style('padding-top','20px');
   }else if(twolines && senH<50){
-    d3.select('#sentence').style('padding-top','40px');
+    d3.select('#sentence').style('padding-top','30px');
   }
 
 }//end of sentence break
