@@ -1,6 +1,11 @@
 var root=document.documentElement;
 var colH=140;
 var senlngth=3;
+var fTone=-1;
+var fWho=-1;
+var fTheme=[];
+var fRhyme=[];
+var counting=0;
 //will store the original organization permanently so it can be reset
 var origin;
 //this is the working list of sonnet data that's adjusted when you switch out lines by rhyme
@@ -8,9 +13,31 @@ var allson;
 var blinds=false;
 var rhymeCount=[];
 var cview='med';
-
-
-
+var tones=[
+  {t:'admonishing', g:1},
+  {t:'chastened', g:1},
+  {t:'candid', g:1},
+  {t:'jealous', g:1},
+  {t:'admiring', g:2},
+  {t:'venerating', g:2},
+  {t:'fervent', g:2},
+  {t:'maddening', g:2},
+  {t:'lustful', g:2},
+  {t:'captivated', g:2},
+  {t:'tender', g:2},
+  {t:'defiant', g:2},
+  {t:'vicarious', g:2},
+  {t:'dependent', g:3},
+  {t:'yielding', g:3},
+  {t:'selfless', g:3},
+  {t:'penitent', g:3},
+  {t:'anguished', g:4},
+  {t:'forlorn', g:4},
+  {t:'doleful', g:4},
+  {t:'betrayed', g:4},
+  {t:'anxious', g:4},
+  {t:'yearning', g:4}
+]
 
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
@@ -39,7 +66,9 @@ function buildBody(data){
       if(rhymeCount.some(exists)){
         rhymeCount[rhymeCount.findIndex(exists)].c=rhymeCount[rhymeCount.findIndex(exists)].c+1;
       }else{
-        rhymeCount.push({r:rhyme[x],c:1});
+        var n = allson[i].line.split(" ");
+        var lastword=n[n.length - 1];
+        rhymeCount.push({r:rhyme[x],c:1,e:lastword});
       }
     }//end of x loop
   }
@@ -51,11 +80,10 @@ function buildBody(data){
     update => update.append("text").text(function(d) { return ' '+d.line+' '; })
   )
   rhymeCheck();
-
-
-
   poemExp();
   sentenceBreak();
+  buildFilters();
+  counter();
 }//end of buildBody
 
 function rhymeCheck(){
@@ -76,7 +104,6 @@ function canRhyme(ind){
   }
   rhymeHandle(ind);
 }
-
 function rhymeHandle(ind){
     line=d3.selectAll('.line').filter(function(d, i){return i==ind;});
     if(allson[ind].cr==true){
@@ -123,7 +150,6 @@ function switchLine(info){
   updateLine(cIndex);
   updateLine(pick);
 }
-
 function updateLine(index){
   wArray=d3.selectAll('.line').data(allson).filter(function(d,i){return i==index});
   wArray.join('text')
@@ -132,8 +158,6 @@ function updateLine(index){
   wArray.append('div').html(' — '+allson[index].sonnet+':'+allson[index].num).classed('label',true);
   rhymeHandle(index);
 }
-
-
 //top bar--------------------------------------------------------
 var topbar=document.querySelector('#topbar');
 if(!window.matchMedia("(hover: none)").matches){
@@ -157,7 +181,6 @@ if(!window.matchMedia("(hover: none)").matches){
     // document.querySelector('#cicon').innerHTML='✍';
   });
 }
-
 d3.selectAll('.scale span').on('click',function(event){
   var butclass=d3.event.currentTarget.className.slice(0,3);
   if(butclass!==cview){
@@ -167,7 +190,6 @@ d3.selectAll('.scale span').on('click',function(event){
     changeScale(cview);
   }
 });
-
 function changeScale(scale){
   d3.select('#maintext')
   .attr('class','')
@@ -175,11 +197,9 @@ function changeScale(scale){
   scrollControl('auto');
   setTimeout(function(){scrollControl('auto')},510);
 };
-
-
 function lowerBlinds(){
   var currentH=$('#topbar').height();
-  var winHs=window.innerHeight*0.5;
+  var winHs=window.innerHeight*0.6;
   if(winHs<300){
     winHs=300;
   }
@@ -192,9 +212,8 @@ function lowerBlinds(){
   .style('height',portion);
   d3.select('#arrow').html('↑↑↑');
   blinds=true;
+  d3.select('#cicon').text('➴').attr('class','pointer');
 }
-
-
 function raiseBlinds(){
   var currentH=$('#topbar').height();
   var winH=window.innerHeight;
@@ -206,8 +225,8 @@ function raiseBlinds(){
   .style('height',colH+'px');
   d3.select('#arrow').html('↓↓↓');
   blinds=false;
+  d3.select('#cicon').text('✎').attr('class','pencil');
 }
-
 function blindsTog(){
   if(blinds==false){
     lowerBlinds();
@@ -215,6 +234,104 @@ function blindsTog(){
     raiseBlinds();
   }
 }
+function buildFilters(){
+  bTones();
+  function bTones(){
+    d3.select('#tone')
+    .selectAll('span')
+    .data(tones,d => d)
+    .join('span')
+    .text(d=>d.t)
+    .attr('class',d =>classG(d));
+
+    function classG(d){
+      return 'toned'+d.g;
+    }
+    var spans=document.querySelectorAll('#tone span');
+    for(var x=0; x<spans.length;x++){
+      var rand=(Math.random()*15)*(Math.random()<0.5?-1:1);
+      var rotation="rotate("+rand+"deg)"
+      spans[x].style.transform=rotation;
+    }
+    d3.selectAll('#tone span')
+    .on('click',function(event){
+      var picked=d3.select(d3.event.currentTarget);
+      if(picked.classed('fil-pick')==true){
+        picked.classed('fil-pick',false);
+        fTone=0;
+      }else{
+        d3.selectAll('#tone span').classed('fil-pick',false);
+        picked.classed('fil-pick',true);
+        fTone=event;
+      }
+      sentenceBuilder();
+    })
+  }
+  d3.selectAll('.tabs span').on('click',function(){
+    var modify=d3.event.currentTarget.innerHTML;
+    console.log(modify);
+    d3.selectAll('.fil-cat').style('opacity',0)
+    setTimeout(function(){
+      d3.selectAll('.fil-cat')
+      .style('display','none');
+      d3.select('#'+modify)
+      .style('display','block')
+      .style('opacity',1)
+    },300)
+
+  })
+
+}
+function sentenceBuilder(){
+  if(fTone!==0){
+    d3.select('#tonetext').text(fTone.t+' ');
+  }else{
+    d3.select('#tonetext').text('');
+  }
+
+
+
+  filterText();
+}
+function filterText(){
+  var toneCheck=true;
+  var toneCount;
+  if(fTone!=='0'){
+    toneCount=tones.indexOf(fTone);
+    toneCheck=(l)=>{return l.tone==toneCount;};
+  }
+  d3.selectAll('.line')
+  .classed('selection',false);
+  d3.selectAll('.line')
+  .filter(function(d, i){return checking(d,i);})
+  .classed('selection',true);
+
+  function checking(d,i){
+    if(toneCheck(d)){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  counter();
+  if(counting>0){
+    scrollSel(d3.select('.selection').node(),'smooth');
+  }
+}//end of filtertext
+function counter(){
+  counting=0;
+  d3.selectAll('.selection').each(function(){
+    counting++;
+  })
+  d3.select('#selected').selectAll('.line').each(function(){
+    counting++;
+  })
+  d3.select('#selected').selectAll('.selection').each(function(){
+    counting--;
+  })
+  d3.select('.counter').select('span').text(counting);
+}
+
 
 
 //poem expand interface--------------------------------------------------------
@@ -223,39 +340,49 @@ function poemExp(){
   for (var i=0; i<sonnets.length;i++){
       sonnets[i].addEventListener("click", function(event){
       var selected=d3.select(event.currentTarget);
-      // if (selected.attr('id')=='maintext'){
-      //   selected=d3.select(event.srcElement);
-      // }else if(selected.classed('line')){
-      //   return;
-      //   console.log('test');
-      // }
       d3.select('#maintext').selectAll('#selected').attr('id','');
       selected.attr('id','selected');
       var source=event.srcElement.parentNode;
       if(source!==null&&!source.className.includes('sonnet')){
-        console.log(event.srcElement.parentNode);
         scrollControl('smooth');
       }
-
-      // document.querySelector('#selected').scrollIntoView({block:'end',behavior: 'smooth'});
+      var heart=selected.select('.heart');
+      heart.on('mouseenter',function(event){
+        if(d3.event.currentTarget.parentNode.id=='selected'){
+          cursorChange('close');
+        }
+      })
+      heart.on('mouseleave',function(event){
+        if(d3.event.currentTarget.parentNode.id=='selected'){
+          cursorChange('default');
+        }
+      })
+      heart.on('click',function(){
+        console.log('hello')
+        setTimeout(function(){d3.select('#maintext').selectAll('#selected').attr('id',''); counter();},100);
+      })
+      counter();
+      //end of on-click
     });
   }
 }//end of poemexp
-
-
-
-
-
-
-
-
 function scrollControl(behave){
   if(d3.select('#selected')._groups[0][0]!==null){
-    var windowRel=document.querySelector('#selected').getBoundingClientRect().y-(colH+50);
-    console.log(windowRel);
-    window.scroll({top:window.scrollY+windowRel,behavior:behave});
+    scrollSel(document.querySelector('#selected'),behave);
+  }else if(d3.select('.selection')._groups[0][0]!==null){
+    scrollSel(d3.select('.selection').node(),behave);
   }
 }
+
+function scrollSel(node,behave){
+  var windowRel=node.getBoundingClientRect().y-(colH+50);
+  window.scroll({top:window.scrollY+windowRel,behavior:behave});
+}
+
+function cursorChange(x){
+  console.log('program mouse to go',x)
+}
+
 
 function sentenceBreak(){
   var sent=d3.select('.sentxt');

@@ -7,18 +7,40 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="https://use.typekit.net/wla2vsh.css">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,200;0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="icon" href="favicon.ico" type="image/ico" sizes="32x32">
   </head>
   <body>
     <div id='mycursor'>
-      <div id='cicon'>✎</div>
+      <div id='cicon' class='pencil'>✎</div>
     </div>
     <div id='topbar'>
-      <div id='sentence'><span class='sentxt oneline noselect'><span id='love'>Love</span> in Shakespeare's Sonnets</span></div>
+      <div id='filtering'>
+        <div class='tabs'>
+          <span>tone</span>
+          <span>object</span>
+          <span>themes</span>
+          <span>rhymes</span>
+        </div>
+        <div class='filters'>
+          <div id='tone' class='fil-cat'></div>
+          <div id='object' class='fil-cat'></div>
+          <div id='themes' class='fil-cat'></div>
+          <div id='rhymes' class='fil-cat'></div>
+        </div>
+      </div>
+      <div id='sentence'>
+        <span class='sentxt oneline noselect'>
+          <span id='tonetext'></span>
+          <span id='love'>Love</span>
+          <span id='whotext'></span>
+          <span id='themetext'></span>
+          <span id='rhymetext'></span>
+        </span>
+        <!-- in Shakespeare's Sonnets -->
+        </div>
       <div id='toggle'>
-        <div class='counter'><span>1560</span></div>
+        <div class='counter'><span>0</span></div>
         <div id='arrow' class='noselect' onclick='blindsTog();'>↓↓↓</div>
       </div>
     </div>
