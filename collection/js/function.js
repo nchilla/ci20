@@ -5,7 +5,16 @@ var fTone=0;
 var fWho=-1;
 var fTheme=[];
 var fRhyme=[];
+var resetCount=0;
 var counting=0;
+var updatedMain=false;
+var punct=new RegExp(',|!|;|:|\\?','gi');
+var dedication=[
+  'TO THE ONLIE BEGETTER OF','THESE INSUING SONNETS','​​Mr W.H.', 'ALL HAPPINESSE','​​AND THAT ETERNITIE','​​PROMISED BY','OUR EVER-LIVING POET.','WISHETH','​​THE WELL-WISHING','ADVENTURER IN','SETTING','FORTH','T.T.']
+for(var q=0;q<dedication.length;q++){
+  console.log(dedication[q])
+};
+
 //will store the original organization permanently so it can be reset
 var origin;
 //this is the working list of sonnet data that's adjusted when you switch out lines by rhyme
@@ -37,15 +46,24 @@ var tones=[
   {t:'betrayed', g:4},
   {t:'anxious', g:4},
   {t:'yearning', g:4}
-]
+];
+var themes=[
+  ['TIME','age and decay','mortality','cyclical time','past and future'],
+  ['NATURE','beauty','growth','virtue','offspring'],
+  ['MATERIALITY','wealth and value','sensation','anatomy','substance','sleep'],
+  ['RELATIONSHIPS','marriage','temptation','conflict','sex','self-image','sentiment'],
+  ['POETRY',"poetry's power","poetry's limitations",'rival poets']
+];
+var allCheck=[{l:'t',a:[],v:false},{l:'n',a:[],v:false},{l:'m',a:[],v:false},{l:'r',a:[],v:false},{l:'p',a:[],v:false}];
 var whoms=['a man','a woman','oneself'];
 var defCursor={icon:'✎',cls:'pencil'};
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
+  coverFade(true,resetCount);
   if (origin!==undefined){
-    origin=data;
+    origin=JSON.parse(JSON.stringify(data));
   }
-  allson=data;
+  allson=JSON.parse(JSON.stringify(data));;
   var currentson=0;
   var curline=1;
   for(var i=0;i<allson.length;i++){
@@ -85,8 +103,31 @@ function buildBody(data){
   sentenceBuilder();
   buildFilters();
   counter();
+  coverFade(false,resetCount);
 }//end of buildBody
-
+function resetBody(){
+  fTone=0;
+  fWho=-1;
+  fTheme=[];
+  fRhyme=[];
+  counting=0;
+  allCheck=[{l:'t',a:[],v:false},{l:'n',a:[],v:false},{l:'m',a:[],v:false},{l:'r',a:[],v:false},{l:'p',a:[],v:false}];
+  d3.selectAll('#selected').attr('id','');
+  d3.selectAll('.selection').classed('selection',false);
+  d3.selectAll('.fil-pick').classed('fil-pick',false);
+  if(updatedMain==true){
+    rhymeCount=[];
+    d3.select('#maintext').selectAll('span').remove();
+    buildBody(origin);
+  }else{
+    sentenceBuilder();
+    buildFilters();
+    counter();
+    coverFade(true,resetCount);
+    coverFade(false,resetCount);
+  };
+  window.scroll({top:0,behavior:'smooth'});
+}
 function rhymeCheck(){
   rhymeCount=rhymeCount.sort(function(a,b){return b.c-a.c;});
   for(var x=0;x<allson.length;x++){
@@ -145,7 +186,7 @@ function switchLine(info){
   //first step is find all the lines that share a rhyme with the clicked line
   //i might change it so that it only searches for matches with the first index rhyme
   var rhymes=info.rhyme;
-
+  updatedMain=true;
   var search=[];
   var samerhyme = (element)=>element.rhyme.some(r=>rhymes.indexOf(r)>= 0)&&!search.includes(allson.indexOf(element));
   while(allson.findIndex(samerhyme)!==-1){
@@ -253,6 +294,7 @@ function buildFilters(){
   bTones();
   bObject();
   bRhyme();
+  bTheme();
   function bTones(){
     d3.select('#tone')
     .selectAll('span')
@@ -312,7 +354,6 @@ function buildFilters(){
   }
   function bRhyme(){
     var moreThan3=rhymeCount.filter(cr => cr.c > 4)
-    var punct=new RegExp(',|!|;|:|\\?','gi');
     d3.select('#rhymes')
     .selectAll('span')
     .data(moreThan3,d => d)
@@ -323,8 +364,6 @@ function buildFilters(){
       })
     .append('span')
     .text(d=>'  ('+d.e.replace(punct,'')+')')
-
-
 
     d3.selectAll('#rhymes .indiv')
     .on('click', function(event){
@@ -339,9 +378,78 @@ function buildFilters(){
       sentenceBuilder();
     })
   }
-
-
-
+  function bTheme(){
+    for(var e=0;e<themes.length;e++){
+      themeClass=themes[e][0].toLowerCase();
+      d3.select('#themes').append('div').attr('class',themeClass+' grouping noselect');
+      d3.select('.'+themeClass)
+      .selectAll('span')
+      .data(themes[e],d => d)
+      .join('span')
+      .text(d=>d)
+      .each(function(d,i,nodes){
+        var rand=(Math.random()*5)*(Math.random()<0.5?-1:1);
+        var rotation="rotate("+rand+"deg)"
+        if(i==0){
+          d3.select(nodes[i])
+          .classed('t-header',true)
+          .append('text').text(':\xa0');
+        }else if(i==themes[e].length-1){
+          d3.select(nodes[i]).classed('t-item',true);
+          nodes[i].style.transform=rotation;
+        }else{
+          d3.select(nodes[i]).classed('t-item',true).append('text').text(',\xa0');
+          nodes[i].style.transform=rotation;
+        }//end of if
+      });
+    }
+    d3.selectAll('#themes .t-item')
+    .on('click', function(event){
+      var cEvent=d3.event.currentTarget;
+      selectThemes(cEvent);
+      sentenceBuilder();
+    })//end of onclick
+    d3.selectAll('#themes .t-header')
+      .on('click', function(event){
+        var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
+        if (s==true){
+          allCheck[themes.findIndex(el=>el[0]==event)].v=false;
+        }else{
+          allCheck[themes.findIndex(el=>el[0]==event)].v=true;
+        }
+        var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
+        var pick=d3.select(d3.event.currentTarget.parentNode);
+        pick.selectAll('.t-item').each(function(d,i,nodes){
+          selectThemes(nodes[i],s);
+        })
+        sentenceBuilder();
+    })//end of onclick
+    function selectThemes(cNode,head){
+      var picked=d3.select(cNode);
+      var curInd=themes.findIndex(el=>el.includes(picked.data()[0]));
+      var cue=allCheck[curInd].l+themes[curInd].indexOf(picked.data()[0]);
+      var arr=allCheck[curInd].a;
+      selectorF=(x)=>{picked.classed('fil-pick',false);};
+      selectorT=(x)=>{picked.classed('fil-pick',true);};
+      if(head==true){
+        if(arr.includes(cue)==false){
+          arr.push(cue);
+        }
+        selectorT();
+      }else if(head==false){
+        selectorF();
+        arr.splice(arr.indexOf(cue),1);
+      }else{
+        if(picked.classed('fil-pick')==true){
+          selectorF();
+          arr.splice(arr.indexOf(cue),1);
+        }else{
+          selectorT();
+          arr.push(cue);
+        }
+      }
+    }//end of selectthemes
+  }//end of bTheme
   //switching tabs
   d3.selectAll('.tabs span').on('click',function(){
     var modify=d3.event.currentTarget.innerHTML;
@@ -384,7 +492,7 @@ function sentenceBuilder(){
   if(fRhyme.length>0){
     var domSel=d3.select('#rhymetext')
     domSel.selectAll('span').remove();
-    domSel.insert('span').text('rhyming with ')
+    domSel.insert('span').text(', rhyming with ')
     var rhymeString='';
     for(var i=0; i<fRhyme.length;i++){
       if(i>0){
@@ -399,6 +507,40 @@ function sentenceBuilder(){
   }else{
     d3.select('#rhymetext').text('');
   }
+
+  if(allCheck.some(el=>el.a.length>0)){
+    d3.select('#themetext').html('');
+    var selCount=0;
+    var tStr='';
+    for(var x=0;x<allCheck.length;x++){
+      var cArr=allCheck[x].a;
+      var arrLeng=cArr.length;
+      if(arrLeng==themes[x].length-1){
+        tStr=tStr+' '+themes[x][0]+',';
+        selCount++;
+      }else{
+        for(var f=0; f<arrLeng;f++){
+          var num=parseInt(cArr[f][1])
+          tStr=tStr+' '+themes[x][num]+',';
+          selCount++;
+        }
+      }
+    }
+    tStr=tStr.slice(0,tStr.length-1);
+    if(selCount>1){
+      tStr=tStr.replace(/,(?=[^,]*$)/, ', or');
+      if(selCount<3){
+        tStr=tStr.replace(',',' ');
+      }
+    }
+    d3.select('#themetext').append('span').text('concerning').classed('startTheme',true);
+    d3.select('#themetext').append('span').text(tStr);
+    var noneSelect=false;
+  }else{
+    d3.select('#themetext').html('');
+  }
+
+
   if(noneSelect==true){
     d3.select('#shakespeare').style('display','inline');
   }else{
@@ -412,6 +554,7 @@ function filterText(){
   var toneCheck=(l)=>{return 'g';};
   var whoCheck=(l)=>{return 'g';};
   var rhymeChecker=(l)=>{return 'g';};
+  var themeChecker=(l)=>{return 'g';};
   var rCompare=[];
   if(fTone!==0){
     toneCheck=(l)=>{if(l.tone==tones.indexOf(fTone)){return 'g';}else{return 'nope';}};
@@ -431,6 +574,22 @@ function filterText(){
     allNothing='g';
     // {return l.who==whoms.indexOf(fWho);};
   }
+  if(allCheck.some(el=>el.a.length>0)){
+    var themeChecker=function(l){
+      var including=0;
+      for(var x=0;x<allCheck.length;x++){
+        if(l.theme.some(r=> allCheck[x].a.indexOf(r) >= 0)){
+          including++;
+        }
+      };
+      if(including>0){
+        return 'g';
+      }else{
+        return 'nope';
+      };
+    };//end of checkingn function
+    allNothing='g';
+  }//end of if statement
   d3.selectAll('.line')
   .classed('selection',false);
   d3.selectAll('.line')
@@ -438,7 +597,7 @@ function filterText(){
   .classed('selection',true);
 
   function checking(d,i){
-    if(toneCheck(d)=='g' && whoCheck(d)=='g' && rhymeChecker(d)=='g' && allNothing=='g'){
+    if(toneCheck(d)=='g' && whoCheck(d)=='g' && rhymeChecker(d)=='g' && themeChecker(d)=='g' && allNothing=='g'){
       return true;
     }else{
       return false;
@@ -463,13 +622,35 @@ function counter(){
   d3.select('.counter').select('span').text(counting);
 }
 
+function goTo(num){
+  if(num==undefined||num<1||num>154){
+    d3.select('#maintext').selectAll('#selected').attr('id','');
+  }else{
+    d3.select('#maintext').selectAll('#selected').attr('id','');
+    var selected=d3.select('.sonnet'+(num));
+    selected.attr('id','selected');
+    var source=selected.node().parentNode;
+    if(source!==null&&!source.className.includes('sonnet')){
+      scrollControl('smooth');
+    }
+    var heart=selected.select('.heart');
 
+    heart.on('click',function(){
+      setTimeout(function(){d3.select('#maintext').selectAll('#selected').attr('id',''); counter();document.querySelector('input').value='';},100);
+    })
+    counter();
+  }
+}
 
 //poem expand interface--------------------------------------------------------
 function poemExp(){
   sonnets=document.querySelectorAll('.sonnet')
   for (var i=0; i<sonnets.length;i++){
       sonnets[i].addEventListener("click", function(event){
+      var ex=event.currentTarget.classList;
+      ex=ex[ex.length-1]
+      ex=ex.slice(6,10);
+      document.querySelector('input').value=ex;
       var selected=d3.select(event.currentTarget);
       d3.select('#maintext').selectAll('#selected').attr('id','');
       selected.attr('id','selected');
@@ -489,17 +670,18 @@ function poemExp(){
       heart.on('click',function(){
         setTimeout(function(){d3.select('#maintext').selectAll('#selected').attr('id',''); counter();},100);
       })
+
       counter();
       //end of on-click
     });
-    if(!window.matchMedia("(hover: none)").matches){
-      sonnets[i].addEventListener("mouseover", function(event){
-        console.log('in sonnet');
-      });
-      sonnets[i].addEventListener("mouseleave", function(event){
-        console.log('out sonnet');
-      });
-  }//end of match media check
+  //   if(!window.matchMedia("(hover: none)").matches){
+  //     sonnets[i].addEventListener("mouseover", function(event){
+  //
+  //     });
+  //     sonnets[i].addEventListener("mouseleave", function(event){
+  //
+  //     });
+  // }//end of match media check
 
   }//end of for loop
 
@@ -600,8 +782,28 @@ function sentenceBreak(){
 
 }//end of sentence break
 
-
-
+function coverFade(cover,r){
+  c=d3.select('#cover');
+  if(cover==false&&r>0){
+    setTimeout(function(){
+      c.style('opacity',0);
+      setTimeout(function(){c.style('display','none');},300);
+    },600)
+  }else
+  if(cover==false){
+    c.style('opacity',0);
+    setTimeout(function(){c.style('display','none');},300);
+    resetCount++;
+  }else{
+    c.style('display','block');
+    c.style('opacity',1);
+  }
+}
+const input = document.querySelector('input');
+input.addEventListener('input', updateValue);
+function updateValue(e) {
+  goTo(document.querySelector('input').value);
+}
 
 function resizing(){
   scrollControl('auto');

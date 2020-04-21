@@ -42,7 +42,9 @@
       }
       for(var x=0;x<json.length;x++){
         json[x].rhyme=json[x].rhyme.split(',');
+        json[x].theme=json[x].theme.split(',');
         console.log(json[x].rhyme);
+        console.log(json[x].theme);
       }
       download(json,"data-json");
     }
