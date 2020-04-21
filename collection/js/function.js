@@ -1,7 +1,7 @@
 var root=document.documentElement;
 var colH=140;
 var senlngth=3;
-var fTone=-1;
+var fTone=0;
 var fWho=-1;
 var fTheme=[];
 var fRhyme=[];
@@ -38,7 +38,8 @@ var tones=[
   {t:'anxious', g:4},
   {t:'yearning', g:4}
 ]
-
+var whoms=['a man','a woman','oneself'];
+var defCursor={icon:'✎',cls:'pencil'};
 //transfer json to variable and add to dom--------------------------------------------------------
 function buildBody(data){
   if (origin!==undefined){
@@ -81,7 +82,7 @@ function buildBody(data){
   )
   rhymeCheck();
   poemExp();
-  sentenceBreak();
+  sentenceBuilder();
   buildFilters();
   counter();
 }//end of buildBody
@@ -118,6 +119,16 @@ function rhymeHandle(ind){
         .on('click',function(info){
           if(d3.select(event.currentTarget.parentNode).attr('id')=='selected'){
             switchLine(info)}//end of if
+          }
+        )
+        .on('mouseover',function(info){
+          if(d3.select(event.currentTarget.parentNode).attr('id')=='selected'){
+            cursorChange('rhyme');
+          }
+          }
+        )
+        .on('mouseleave',function(info){
+          cursorChange('default');
           }
         )
         .classed('changeable',true);
@@ -212,7 +223,9 @@ function lowerBlinds(){
   .style('height',portion);
   d3.select('#arrow').html('↑↑↑');
   blinds=true;
-  d3.select('#cicon').text('➴').attr('class','pointer');
+  defCursor.icon='➴';
+  defCursor.cls='pointer';
+  cursorChange('default');
 }
 function raiseBlinds(){
   var currentH=$('#topbar').height();
@@ -225,7 +238,9 @@ function raiseBlinds(){
   .style('height',colH+'px');
   d3.select('#arrow').html('↓↓↓');
   blinds=false;
-  d3.select('#cicon').text('✎').attr('class','pencil');
+  defCursor.icon='✎';
+  defCursor.cls='pencil';
+  cursorChange('default');
 }
 function blindsTog(){
   if(blinds==false){
@@ -236,6 +251,8 @@ function blindsTog(){
 }
 function buildFilters(){
   bTones();
+  bObject();
+  bRhyme();
   function bTones(){
     d3.select('#tone')
     .selectAll('span')
@@ -264,41 +281,155 @@ function buildFilters(){
         picked.classed('fil-pick',true);
         fTone=event;
       }
+
       sentenceBuilder();
     })
   }
+  function bObject(){
+    d3.select('#object')
+    .selectAll('span')
+    .data(whoms,d => d)
+    .join('span')
+    .text(d=>d)
+    .attr('class',d =>classO(d));
+    function classO(d){
+      var splitter=d.split(' ');
+      return splitter[splitter.length-1];
+    }
+    d3.selectAll('#object span')
+    .on('click', function(event){
+      var picked=d3.select(d3.event.currentTarget);
+      if(picked.classed('fil-pick')==true){
+        picked.classed('fil-pick',false);
+        fWho=-1;
+      }else{
+        d3.selectAll('#object span').classed('fil-pick',false);
+        picked.classed('fil-pick',true);
+        fWho=event;
+      }
+      sentenceBuilder();
+    })
+  }
+  function bRhyme(){
+    var moreThan3=rhymeCount.filter(cr => cr.c > 4)
+    var punct=new RegExp(',|!|;|:|\\?','gi');
+    d3.select('#rhymes')
+    .selectAll('span')
+    .data(moreThan3,d => d)
+    .join('span')
+    .classed('indiv',true)
+    .each(function(d){
+      parsePhonetics(d.r)
+      })
+    .append('span')
+    .text(d=>'  ('+d.e.replace(punct,'')+')')
+
+
+
+    d3.selectAll('#rhymes .indiv')
+    .on('click', function(event){
+      var picked=d3.select(d3.event.currentTarget);
+      if(picked.classed('fil-pick')==true){
+        picked.classed('fil-pick',false);
+        fRhyme.splice(fRhyme.indexOf(event),1);
+      }else{
+        picked.classed('fil-pick',true);
+        fRhyme.push(event);
+      }
+      sentenceBuilder();
+    })
+  }
+
+
+
+  //switching tabs
   d3.selectAll('.tabs span').on('click',function(){
     var modify=d3.event.currentTarget.innerHTML;
-    console.log(modify);
+    var disp;
+    switch(modify){
+      case 'object':
+      disp='flex'
+      break;
+      default:
+      disp='block';
+      break;
+    }
+    d3.select('.current-tab').classed('current-tab',false);
+    d3.select(event.currentTarget).classed('current-tab',true);
     d3.selectAll('.fil-cat').style('opacity',0)
     setTimeout(function(){
       d3.selectAll('.fil-cat')
       .style('display','none');
       d3.select('#'+modify)
-      .style('display','block')
+      .style('display',disp)
       .style('opacity',1)
     },300)
 
-  })
-
-}
+  });
+}//end of buildfilters
 function sentenceBuilder(){
+  var noneSelect=true;
   if(fTone!==0){
     d3.select('#tonetext').text(fTone.t+' ');
+    var noneSelect=false;
   }else{
     d3.select('#tonetext').text('');
   }
-
-
-
+  if(fWho!==-1){
+    d3.select('#whotext').text('for '+fWho+' ');
+    var noneSelect=false;
+  }else{
+    d3.select('#whotext').text('');
+  }
+  if(fRhyme.length>0){
+    var domSel=d3.select('#rhymetext')
+    domSel.selectAll('span').remove();
+    domSel.insert('span').text('rhyming with ')
+    var rhymeString='';
+    for(var i=0; i<fRhyme.length;i++){
+      if(i>0){
+        domSel.insert('span').text(', ')
+      }
+      if(i==fRhyme.length-1&&fRhyme.length>1){
+        domSel.insert('span').text(' or ')
+      }
+      parsePhonetics(fRhyme[i].r,domSel,i);
+    }
+    var noneSelect=false;
+  }else{
+    d3.select('#rhymetext').text('');
+  }
+  if(noneSelect==true){
+    d3.select('#shakespeare').style('display','inline');
+  }else{
+    d3.select('#shakespeare').style('display','none');
+  }
+  sentenceBreak();
   filterText();
 }
 function filterText(){
-  var toneCheck=true;
-  var toneCount;
-  if(fTone!=='0'){
-    toneCount=tones.indexOf(fTone);
-    toneCheck=(l)=>{return l.tone==toneCount;};
+  var allNothing='nope';
+  var toneCheck=(l)=>{return 'g';};
+  var whoCheck=(l)=>{return 'g';};
+  var rhymeChecker=(l)=>{return 'g';};
+  var rCompare=[];
+  if(fTone!==0){
+    toneCheck=(l)=>{if(l.tone==tones.indexOf(fTone)){return 'g';}else{return 'nope';}};
+    allNothing='g';
+  }
+  if(fWho!==-1){
+    whoCheck=(l)=>{if(l.who==whoms.indexOf(fWho)){return 'g';}else{return 'nope';}};
+    allNothing='g';
+    // {return l.who==whoms.indexOf(fWho);};
+  }
+  if(fRhyme.length>0){
+    for(var x=0;x<fRhyme.length;x++){
+      rCompare.push(fRhyme[x].r);
+    }
+    rhymeChecker=(l)=>{
+      if(l.rhyme.some(r=> rCompare.indexOf(r) >= 0)){return 'g';}else{return 'nope';}};
+    allNothing='g';
+    // {return l.who==whoms.indexOf(fWho);};
   }
   d3.selectAll('.line')
   .classed('selection',false);
@@ -307,7 +438,7 @@ function filterText(){
   .classed('selection',true);
 
   function checking(d,i){
-    if(toneCheck(d)){
+    if(toneCheck(d)=='g' && whoCheck(d)=='g' && rhymeChecker(d)=='g' && allNothing=='g'){
       return true;
     }else{
       return false;
@@ -349,22 +480,29 @@ function poemExp(){
       var heart=selected.select('.heart');
       heart.on('mouseenter',function(event){
         if(d3.event.currentTarget.parentNode.id=='selected'){
-          cursorChange('close');
         }
       })
       heart.on('mouseleave',function(event){
         if(d3.event.currentTarget.parentNode.id=='selected'){
-          cursorChange('default');
         }
       })
       heart.on('click',function(){
-        console.log('hello')
         setTimeout(function(){d3.select('#maintext').selectAll('#selected').attr('id',''); counter();},100);
       })
       counter();
       //end of on-click
     });
-  }
+    if(!window.matchMedia("(hover: none)").matches){
+      sonnets[i].addEventListener("mouseover", function(event){
+        console.log('in sonnet');
+      });
+      sonnets[i].addEventListener("mouseleave", function(event){
+        console.log('out sonnet');
+      });
+  }//end of match media check
+
+  }//end of for loop
+
 }//end of poemexp
 function scrollControl(behave){
   if(d3.select('#selected')._groups[0][0]!==null){
@@ -380,7 +518,57 @@ function scrollSel(node,behave){
 }
 
 function cursorChange(x){
-  console.log('program mouse to go',x)
+  var cicon=d3.select('#cicon');
+  var caption=d3.select('#mcaption');
+  switch(x){
+    case 'default':
+    cicon.text(defCursor.icon).attr('class',defCursor.cls);
+    caption.style('opacity',0);
+    break;
+    case 'rhyme':
+    caption.text('⇄ shuffle').style('opacity',1);
+    break;
+  }
+}
+function parsePhonetics(str,node,ind){
+  var signal=0;
+  var span;
+  if(node==undefined){
+    span=d3.select('#rhymes').selectAll('span').filter(function(d, i){return d.r==str;});
+    ind='';
+  }else{
+    span=node;
+  }
+  var rep1=new RegExp('ʊ','gi');
+  var rep2=new RegExp('ɔ','gi');
+  var rep3=new RegExp('ɑ','gi');
+  var rep4=new RegExp('ʌ','gi');
+  var rep5=new RegExp('ʒ','gi');
+  var rep6=new RegExp('з','gi');
+  var rep7=new RegExp('ɪ','gi');
+  var rep8=new RegExp('ʃ','gi');
+  str=str.replace(rep1,'@Ω');
+  str=str.replace(rep2,'@C');
+  str=str.replace(rep3,'α');
+  str=str.replace(rep4,'ʌ');
+  str=str.replace(rep5,'З');
+  str=str.replace(rep6,'з');
+  str=str.replace(rep7,'І');
+  str=str.replace(rep8,'L');
+  span.insert('span').classed('phonetic'+ind,true);
+  current=span.select('.phonetic'+ind)
+  for(var x=0; x<str.length;x++){
+    if(signal!==0){
+      current.append('span').classed(signal,true).text(str[x]);
+      signal=0;
+    }else if(str[x]=='@'){
+      signal='updown';
+    }else if(str[x]=='L'){
+      current.append('span').classed('ital',true).text(str[x].toLowerCase());
+    }else{
+      current.append('span').text(str[x]);
+    }
+  }
 }
 
 
@@ -403,7 +591,7 @@ function sentenceBreak(){
     d3.select('#sentence').style('padding-top','20px');
   }
   var twolines=sent.classed('twolines')==true;
-  if (twolines&&senH>colH){
+  if (twolines&&senH>100){
     d3.select('.sentxt').attr('class','sentxt threelines noselect');
     d3.select('#sentence').style('padding-top','20px');
   }else if(twolines && senH<50){

@@ -26,9 +26,23 @@ br{
 #mycursor{
   position:fixed;
   width:100px;
-  height:100px;
+  height:30px;
   z-index:1000;
   pointer-events:none
+}
+#mcaption{
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:80%;
+  height:20px;
+  white-space: nowrap;
+  opacity:0;
+  transition:opacity 0.3s;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size:16px;
+  color:rgba(var(--bodc),1);
+
 }
 #cicon{
   font-size:40px;
@@ -110,6 +124,9 @@ br{
   border-bottom: 1px solid rgba(var(--bodc),1);
   /* color:rgba(255,56,59,1); */
 }
+.current-tab{
+  text-decoration: underline;
+}
 
 .tabs span{
   margin-top: 20px;
@@ -119,10 +136,7 @@ br{
   display:inline-block;
   transition:background-color,0.3;
 }
-.tabpick{
-  color:white;
-  background-color:rgba(235, 255, 91, 0.29);
-}
+
 
 
 .filters{
@@ -139,13 +153,6 @@ br{
   padding-right: var(--padding);
   transition:opacity, 0.3s;
 }
-#tone span{
-  display:inline-block;
-  margin-right:40px;
-  margin-bottom:40px;
-}
-
-
 
 .fil-pick::before{
   content:'➵';
@@ -157,18 +164,59 @@ br{
   font-size:30px;
   padding-top:30px;
 }
+#tone span{
+  display:inline-block;
+  margin-right:40px;
+  margin-bottom:40px;
+}
 #object{
-  background-color: green;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+  justify-content: center;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+#object span{
+  display:inline-block;
+  margin:20px;
+  white-space: nowrap;
+}
+#rhymes{
+  display:block;
+  font-family:'IBM Plex Sans', sans-serif;
+  font-size:20px;
+  padding-top:30px;
+}
+#rhymes .indiv{
+  display:inline-block;
+  margin-right:40px;
+  margin-bottom:40px;
+}
+
+.man,.woman{
+  font-size:80px;
+  margin-left:40px;
+  margin-right:40px;
+}
+.oneself{
+  align-self: flex-start;
+  width:100px;
+  font-weight: 400;
+  font-style: normal;
+  margin-left:50% !important;
+  margin-right:50% !important;
+  position:relative;
 }
 #themes{
   background-color: yellow;
 }
-#rhymes{
-  background-color:blue;
-}
+
 
 .fil-cat span{
-  transition:background-color,0.3;
+  transition:background-color 0.3s;
 }
 
 
@@ -321,11 +369,25 @@ br{
 
 /*typography------------------------------*/
 
+.ital{
+  font-style: italic;
+}
+.updown{
+  display:inline-block;
+  transform:rotate(180deg);
+  transform-origin: center;
+}
+
 #tonetext{
   font-weight: 400;
   font-family: starling,serif;
 }
-
+#whotext{
+  font-style: italic;
+}
+#shakespeare{
+  display:none;
+}
 
 
 .sonnet{
@@ -350,9 +412,11 @@ br{
 .twolines{
   font-size:30px;
   font-weight: 300;
+  line-height: 35px;
 }
 .threelines{
   font-size:20px;
+  line-height: 25px;
 }
 
 .changeable{
@@ -421,6 +485,7 @@ br{
   .fil-cat span:hover{
     background-color:rgba(235, 255, 91, 0.29);
   }
+
 
   .tabs span:hover{
     background-color:rgba(235, 255, 91, 0.29);
