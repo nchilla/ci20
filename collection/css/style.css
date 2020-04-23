@@ -491,7 +491,6 @@ br{
   font-family: starling,serif;
   color:rgba(var(--strong),1);
   font-weight: 900;
-  font-style: italic;
 }
 .heart{
   transition: background-color,0.3s;

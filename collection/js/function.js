@@ -52,7 +52,7 @@ var themes=[
   ['NATURE','beauty','growth','virtue','offspring'],
   ['MATERIALITY','wealth and value','sensation','anatomy','substance','sleep'],
   ['RELATIONSHIPS','marriage','temptation','conflict','sex','self-image','sentiment'],
-  ['POETRY',"poetry's power","poetry's limitations",'rival poets']
+  ['POETRY',"poetry’s power","poetry’s limitations",'rival poets']
 ];
 var allCheck=[{l:'t',a:[],v:false},{l:'n',a:[],v:false},{l:'m',a:[],v:false},{l:'r',a:[],v:false},{l:'p',a:[],v:false}];
 var whoms=['a man','a woman','oneself'];
