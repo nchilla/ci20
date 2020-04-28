@@ -528,7 +528,7 @@ function sentenceBuilder(){
     }
     tStr=tStr.slice(0,tStr.length-1);
     if(selCount>1){
-      tStr=tStr.replace(/,(?=[^,]*$)/, ', or');
+      tStr=tStr.replace(/,(?=[^,]*$)/, ', and');
       if(selCount<3){
         tStr=tStr.replace(',',' ');
       }
@@ -578,11 +578,18 @@ function filterText(){
     var themeChecker=function(l){
       var including=0;
       for(var x=0;x<allCheck.length;x++){
-        if(l.theme.some(r=> allCheck[x].a.indexOf(r) >= 0)){
-          including++;
+        var present=allCheck[x].a;
+        for(var r=0;r<present.length;r++){
+          if(l.theme.includes(present[r])){
+          }else{
+            including++;
+          }
         }
+        // if(l.theme.some(r=> allCheck[x].a.indexOf(r) >= 0)){
+        //   including++;
+        // }
       };
-      if(including>0){
+      if(including==0){
         return 'g';
       }else{
         return 'nope';
