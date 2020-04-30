@@ -1,19 +1,20 @@
 
 // read the JSON file (or, get the live data from NYT)
 var xmlhttp = new XMLHttpRequest();
-var url = "https://developer.nrel.gov/api/cleap/v1/state_co2_emissions?state_abbr=CA&type=total&api_key=2bvtTVihvtES7qL7HKokoVn4xcvlVQobudXSy0Ym"; //your file name (or, the structured URL for API call)
+var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=climate+change&facet_fields=section_name&facet=true&api-key=8JjFROX7FQ09VP3hu6R7QsoYYaHUxiqz"; //your file name (or, the structured URL for API call)
 var data = [];
 xmlhttp.onreadystatechange = function() {
   if (this.readyState == 4 && this.status == 200) {
     data = JSON.parse(this.responseText);
-    use(data);
+    facets(data);
     //we'll do something here
   }
 };
+
 //https://inpho.cogs.indiana.edu?idea=646
 //nrel.gov key: 2bvtTVihvtES7qL7HKokoVn4xcvlVQobudXSy0Ym
 //https://developer.nrel.gov/api/cleap/v1/state_co2_emissions?state_abbr=CA&type=commercial&api_key=2bvtTVihvtES7qL7HKokoVn4xcvlVQobudXSy0Ym
-
+//https://developer.nrel.gov/api/cleap/v1/state_co2_emissions?state_abbr=CA&type=total&api_key=2bvtTVihvtES7qL7HKokoVn4xcvlVQobudXSy0Ym
 //NASA API KEY: 2CkTJiJOcgHBDbLD5WIdbboYHEwUJ05a7oOdPE4Z
 var today=new Date();
 var dd=today.getDate();
@@ -67,4 +68,7 @@ function use(data){
   });
 
   console.log(yearObj)
+}
+function facets(data){
+  console.log(data);
 }
