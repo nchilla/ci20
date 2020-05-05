@@ -3,7 +3,7 @@ var comp=[];
 var facets=[{tn: "days of the week", n: "day_of_week"},{tn: "news desks", n: "news_desk"},{tn: "section", n: "section_name"},{tn: "type of material", n: "type_of_material"},{tn: "recipe ingredients", n: "ingredients"}];
 var param=[
   {tn:'all fields/content',n:'query',t:'text',o:['anything']},
-  {tn:'subjects',n:'subject',t:'text',o:['protest']},
+  {tn:'subjects',n:'subject',t:'text',o:['technology']},
   {tn:'people',n:'persons',t:'split',o:['first name','last name']},
   {tn:'organizations',n:'organizations',t:'text',o:['YMCA']},
   {tn:'geolocations',n:'glocations',t:'text',o:['australia']},
