@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1">
+    <title>real-time-nico</title>
+    <link rel="stylesheet" href="css/clearstyle.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://use.typekit.net/ujs1pav.css">
+  </head>
+  <body>
+    <div id='graph'>
+      <div class="wip-banner">
+        <h1>CONSTRUCTION ZONE</h1>
+        <h3>This spot is going to have a graph charting the data the user pulls below over time. I'm not done with that yet (sorry). I spent a lot of time on the <a href='#control'>filter system below</a>, and it's mostly functional in pulling the data I'm going to use for the graph.</h3>
+      </div>
+      <div class="datawrap"></div>
+    </div>
+    <div id='control'>
+      <div id='options'></div>
+      <div id='nav' class='noselect'>
+        <div class='tab'><h3>filters</h3></div>
+        <div><h3>sorting</h3></div>
+        <div><h3>launch!</h3></div>
+      </div>
+      <div id='logic' class='logs'>
+        <h2>Choose parameters and use logic gates to limit the results.</h2>
+      </div>
+      <div id='facets' class='logs'>
+        <h2>Prioritize a category and the results will be sorted into buckets for the top 10 (max) items inside of it.</h2>
+        <div id='buckets'></div>
+      </div>
+    </div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="script.js" charset="utf-8"></script>
+  </body>
+</html>
