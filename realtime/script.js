@@ -2,7 +2,6 @@ var settings=[];
 var comp=[];
 var facets=[{tn: "days of the week", n: "day_of_week"},{tn: "news desks", n: "news_desk"},{tn: "section", n: "section_name"},{tn: "type of material", n: "type_of_material"},{tn: "recipe ingredients", n: "ingredients"}];
 var param=[
-  {tn:'all fields/content',n:'query',t:'text',o:['anything']},
   {tn:'subjects',n:'subject',t:'text',o:['technology']},
   {tn:'people',n:'persons',t:'split',o:['first name','last name']},
   {tn:'organizations',n:'organizations',t:'text',o:['YMCA']},
@@ -18,7 +17,8 @@ var mode=true;
 var years=[2016,2017,2018,2019,2020];
 // word_count
 // {tn:'word count',t:'number',n:'word_count',o:['<500']}
-
+//going to add back in:
+// {tn:'raw contents',n:'query',t:'text',o:['anything']},
 
 
 function startUp(){
@@ -136,12 +136,13 @@ function add(d,e){
     function scoop(targ){
       var first=d3.select(targ.parentNode).select('.first').node().value;
       var last=d3.select(targ.parentNode).select('.last').node().value;
-      var name=last+','+first
+      var name=last+', '+first
       if(last==''){
         name=first;
       }else if(first==''){
         name=last;
       }
+      console.log(name)
       return name;
     }
     filter.select('input').node().focus();
@@ -219,8 +220,12 @@ document.querySelectorAll('#nav div').forEach((item, i) => {
   })
 });
 
+
+
+
 function launch(){
   comp=[];
+  // urlGenerator(2019);
   years.forEach((item, i) => {
     urlGenerator(item)
     // setTimeout(urlGenerator(item),600);
@@ -228,65 +233,51 @@ function launch(){
 }
 
 function urlGenerator(yr){
-  settings.sort(function compareFunction(a,b){
-    if(a.n=='query'){
-      return -1;
-    }else if(b.n=='query'){
-      return 1;
-    }else{
-      return -1;
-    }
-  });
-  var custom='';
-  settings.forEach((item, i) => {
-    var addition='';
-    var sep='"';
-    var up=' '+gates[item.g].toUpperCase()+' ';
-    if((up==' OR ')||(i==0&&up==' AND ')){
-      up='';
-    }
-    if(item.n=='query'){
-      sep=''
-    }
-    var match=param[param.findIndex(el=>el.n==item.n)];
-    item.a.forEach((choice, c) => {
-      var up2=' '+gates[choice.g].toUpperCase()+' ';
-      if((c==0&&up2==' OR ')||(c==0&&up2==' AND ')){
-        up2='';
-      }
-      addition=addition+up2+sep+choice.v+sep;
-    });
-    if(item.n=='query'){
-      var extra='';
-      if(settings.length>1){
-        extra='&fq='
-      }
-      custom='q='+addition.replace(/&/g,'and')+extra+custom;
-    }else{
-      custom=custom+up+item.n+'.contains:('+addition+')';
-    }
-  });
-  if(settings.findIndex(el=>el.n=='query')==-1){
-    custom='fq='+custom;
-  }
+  //sections of query
   var pubY='pub_year:'+yr;
-  custom=custom+' AND '+pubY+'&facet_fields='+facets[0].n
-  console.log(custom)
+  var custom='';
+  var query=''
+
+  //stringbuilding tools
+  var quotes='""';
+  var parenth='()';
+
+  settings.forEach((item, i) => {
+    var match=param[param.findIndex(el=>el.n==item.n)];
+    var inside=''
+    var mult='';
+    if(item.a.length>0){
+      mult='.contains';
+    }
+    item.a.forEach((choice, c) => {
+      var gate=g(choice.g,c);
+      inside=inside.concat(gate,insertString(quotes,choice.v,1));
+    });
+    custom=custom+g(item.g,i)+item.n+mult+':'+insertString(parenth,inside,1)
+  });
+  custom='fq='+insertString(parenth,custom,1);
+  custom=query+custom;
+  custom=custom+' AND '+pubY;
+  custom=custom+'&facet_fields='+facets[0].n;
+  console.log(custom);
   var vase='https://api.nytimes.com/svc/search/v2/articlesearch.json?';
   var key='&api-key=8JjFROX7FQ09VP3hu6R7QsoYYaHUxiqz';
   var presets='&facet=true&facet_filter=true';
 
   var url = vase+custom+presets+key;
+  console.log(url);
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
+      console.log('xmlhttp',xmlhttp.responseURL);
       data = JSON.parse(this.responseText);
+      console.log(data.response);
       comp.push({y:yr,h:data.response.meta.hits,f:data.response.facets});
       if(comp.length>4){
         comp.sort(function compareFunction(a,b){
           return a.y-b.y
         });
-        console.log(comp);
+
         paintGraph(comp);
         window.scrollTo({
           top:0,
@@ -294,12 +285,34 @@ function urlGenerator(yr){
           behavior:'smooth'
         });
       }
-      //we'll do something here
     }
   };
   xmlhttp.open("GET", url, true);
   xmlhttp.send();
+  function g(index,i){
+    var gate;
+    if(i==0&&index<2){
+      gate='';
+    }else if(i==0){
+      gate=gates[index].toUpperCase()+' ';
+    }else{
+      gate=' '+gates[index].toUpperCase()+' ';
+    }
+    return gate;
+  }
+}//end of url generator
+function insertString(original,insert,position){
+  var a=original;
+  var b=insert;
+  var c=position;
+  //credit to userjAndy on stack overflow
+  var output = [a.slice(0, c), b, a.slice(c)].join('');
+  return output;
 }
+
+
+
+
 function paintGraph(data){
   d3.select('.datawrap').selectAll('div').remove();
   d3.select('.wip-banner').style('opacity',0)
