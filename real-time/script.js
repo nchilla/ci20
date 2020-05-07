@@ -1,11 +1,10 @@
 var settings=[];
-var comp=[];
 var facets=[{tn: "days of the week", n: "day_of_week"},{tn: "news desks", n: "news_desk"},{tn: "section", n: "section_name"},{tn: "type of material", n: "type_of_material"},{tn: "recipe ingredients", n: "ingredients"}];
 var param=[
   {tn:'subjects',n:'subject',t:'text',o:['technology']},
   {tn:'people',n:'persons',t:'split',o:['first name','last name']},
-  {tn:'organizations',n:'organizations',t:'text',o:['YMCA']},
-  {tn:'geolocations',n:'glocations',t:'text',o:['australia']},
+  {tn:'organizations',n:'organizations',t:'text',o:['facebook']},
+  {tn:'geolocations',n:'glocations',t:'text',o:['san francisco']},
   {tn:'recipe ingredients',n:'ingredients',t:'text',o:['garlic']},
   {tn:'days of the week',n:'day_of_week',t:'options',o:['sunday','monday','tuesday','wednesday','thursday','friday','saturday']},
   {tn:'news desks',n:'news_desk',t:'options',o:["Arts & Leisure", "Arts", "Automobiles", "Blogs", "Books", "Booming", "Business Day", "Business", "Cars", "Circuits", "Classifieds", "Connecticut", "Crosswords & Games", "Culture", "DealBook", "Dining", "Editorial", "Education", "Energy", "Entrepreneurs", "Environment", "Escapes", "Fashion & Style", "Fashion", "Favorites", "Financial", "Flight", "Food", "Foreign", "Generations", "Giving", "Global Home", "Health & Fitness", "Health", "Home & Garden", "Home", "Jobs", "Key", "Letters", "Long Island", "Magazine", "Market Place", "Media", "Men's Health", "Metro", "Metropolitan", "Movies", "Museums", "National", "Nesting", "Obits", "Obituaries", "Obituary", "OpEd", "Opinion", "Outlook", "Personal Investing", "Personal Tech", "Play", "Politics", "Regionals", "Retail", "Retirement", "Science", "Small Business", "Society", "Sports", "Style", "Sunday Business", "Sunday Review", "Sunday Styles", "T Magazine", "T Style", "Technology", "Teens", "Television", "The Arts", "The Business of Green", "The City Desk", "The City", "The Marathon", "The Millennium", "The Natural World", "The Upshot", "The Weekend", "The Year in Pictures", "Theater", "Then & Now", "Thursday Styles", "Times Topics", "Travel", "U.S.", "Universal", "Upshot", "UrbanEye", "Vacation", "Washington", "Wealth", "Weather", "Week in Review", "Week", "Weekend", "Westchester", "Wireless Living", "Women's Health", "Working", "Workplace", "World", "Your Money"]},
@@ -14,7 +13,14 @@ var param=[
 ];
 var gates=['or','and','not'];
 var mode=true;
-var years=[2016,2017,2018,2019,2020];
+var years=[2011,2012,2013,2014,2015,2016,2017,2018,2019,2020];
+var cooldown=false;
+var displayOptions=['total articles','categories']
+var display=1;
+var histoire=[];
+var presently=0;
+var pastCursor=[];
+
 // word_count
 // {tn:'word count',t:'number',n:'word_count',o:['<500']}
 //going to add back in:
@@ -24,7 +30,7 @@ var years=[2016,2017,2018,2019,2020];
 function startUp(){
   buildControl();
   addFacet(facets[0]);
-  rotateThing();
+  // rotateThing();
 }
 
 function buildControl(){
@@ -47,8 +53,6 @@ function buildControl(){
   function classM(type){return 'menu '+type};
   function classG(type){return 'toggle '+type};
 }
-
-
 function addFacet(d,e){
   var index=facets.findIndex(el=>el.n==d.n)
   if(index==-1){
@@ -65,9 +69,6 @@ function addFacet(d,e){
     .append('h3').classed('noselect',true).html(item.tn)
   });
 }
-
-
-
 function add(d,e){
   var domproof=d.n.replace('.','_');
   var wrapper=d3.select('.fgwrap.'+domproof);
@@ -142,7 +143,6 @@ function add(d,e){
       }else if(first==''){
         name=last;
       }
-      console.log(name)
       return name;
     }
     filter.select('input').node().focus();
@@ -182,14 +182,12 @@ d3.selectAll('.gate').on('click',function(event){
   .html(gates[copy.g].toUpperCase());
 })
 }//end of add()
-
 function changeValue(change,node){
   var copy=d3.select(node).datum();
   copy.v=change;
   d3.select(node).datum(copy);
 }
-
-
+//this controls what happens when you click on a nav bar item
 document.querySelectorAll('#nav div').forEach((item, i) => {
   item.addEventListener('click',function(event){
     var target=event.currentTarget;
@@ -214,7 +212,35 @@ document.querySelectorAll('#nav div').forEach((item, i) => {
       mode=false;
       break;
       case 'launch!':
-      launch();
+      if(cooldown==false){
+        launch();
+
+        //cooldown functions
+        cooldown=true;
+        //display stuff
+        d3.select(target).classed('or',true)
+        setTimeout(function(){
+          d3.select(target).classed('or',false).classed('not',true).select('h3').html('cooldown');
+          for(var i=0;i<30+years.length;i++){
+            if(cooldown==false){
+              break;
+            }
+            var timed=30+years.length-i;
+            timer(timed,i);
+            function timer(time,index){
+              setTimeout(function(){
+                d3.select(target).select('h3').html('cooldown '+time);
+              },index*1000)
+            }//end of timer funnction
+          }
+        },500)
+        //reactivate and remove display
+        setTimeout(function(){
+          d3.select(target).classed('not',false).select('h3').html('launch!');
+          cooldown=false;
+        },years.length*1000+30000)
+      }
+
       break;
     }
   })
@@ -224,20 +250,73 @@ document.querySelectorAll('#nav div').forEach((item, i) => {
 
 
 function launch(){
-  comp=[];
-  // urlGenerator(2019);
+  var urls=[];
+  var comp=[];
+  // this builds the urls for each year in years
   years.forEach((item, i) => {
-    urlGenerator(item)
-    // setTimeout(urlGenerator(item),600);
+    urls.push({yr:item,url:urlGenerator(item)})
   });
-}
+  //this part splits the urls into segments of 5 so that they dont break the api request limit
+  var segments=[];
+  var segCount=0;
+  for(var i=0;segCount<urls.length;i++){
+    var sI=i*5;
+    segments.push(urls.slice(sI,sI+5))
+    var latest=segments[segments.length-1]
+    segCount=segCount+latest.length;
+    console.log('latest count: ',latest.length,'total count: ',segCount);
+  }
+  //for every grouping of 5 urls
+  segments.forEach((item, i) => {
+    //time out to respect the stupid request limit
+    setTimeout(function(){
+      //for every individual request
+      item.forEach((request, r) => {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            data = JSON.parse(this.responseText);
+            comp.push({y:request.yr,h:data.response.meta.hits,f:data.response.facets[facets[0].n].terms});
+            comp.sort(function compareFunction(a,b){
+              return a.y-b.y
+            });
+              paintGraph(comp);
+              window.scrollTo({
+                top:0,
+                left:0,
+                behavior:'smooth'
+              });
+              if(comp.length==years.length){
+                histoire.push({n:'lol',data:comp});
+                presently=histoire.length-1;
+              }
+          }else if(this.status == 429){
+            console.log('too many requests')
+          }else if(this.status == 400){
+            console.log('bad requests')
+          }
+        };
+        xmlhttp.open("GET", request.url, true);
+        xmlhttp.send();
+
+        //end of for each url
+      });
+    },i*100)
+    //end of timeout
+  //end of for each segment
+  });
+
+
+
+
+
+}//end of launch
 
 function urlGenerator(yr){
   //sections of query
   var pubY='pub_year:'+yr;
   var custom='';
   var query=''
-
   //stringbuilding tools
   var quotes='""';
   var parenth='()';
@@ -246,12 +325,12 @@ function urlGenerator(yr){
     var match=param[param.findIndex(el=>el.n==item.n)];
     var inside=''
     var mult='';
-    if(item.a.length>0){
+    if(item.a.length>0&&(item.n!=='day_of_week')){
       mult='.contains';
     }
     item.a.forEach((choice, c) => {
       var gate=g(choice.g,c);
-      inside=inside.concat(gate,insertString(quotes,choice.v,1));
+      inside=inside.concat(gate,insertString(quotes,choice.v.replace('&','%26'),1));
     });
     custom=custom+g(item.g,i)+item.n+mult+':'+insertString(parenth,inside,1)
   });
@@ -259,36 +338,9 @@ function urlGenerator(yr){
   custom=query+custom;
   custom=custom+' AND '+pubY;
   custom=custom+'&facet_fields='+facets[0].n;
-  console.log(custom);
   var vase='https://api.nytimes.com/svc/search/v2/articlesearch.json?';
   var key='&api-key=8JjFROX7FQ09VP3hu6R7QsoYYaHUxiqz';
   var presets='&facet=true&facet_filter=true';
-
-  var url = vase+custom+presets+key;
-  console.log(url);
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      console.log('xmlhttp',xmlhttp.responseURL);
-      data = JSON.parse(this.responseText);
-      console.log(data.response);
-      comp.push({y:yr,h:data.response.meta.hits,f:data.response.facets});
-      if(comp.length>4){
-        comp.sort(function compareFunction(a,b){
-          return a.y-b.y
-        });
-
-        paintGraph(comp);
-        window.scrollTo({
-          top:0,
-          left:0,
-          behavior:'smooth'
-        });
-      }
-    }
-  };
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
   function g(index,i){
     var gate;
     if(i==0&&index<2){
@@ -300,6 +352,9 @@ function urlGenerator(yr){
     }
     return gate;
   }
+  var url = vase+custom+presets+key;
+  return url;
+
 }//end of url generator
 function insertString(original,insert,position){
   var a=original;
@@ -310,34 +365,150 @@ function insertString(original,insert,position){
   return output;
 }
 
-
-
-
 function paintGraph(data){
-  d3.select('.datawrap').selectAll('div').remove();
-  d3.select('.wip-banner').style('opacity',0)
-  data.forEach((item, i) => {
-    d3.select('.datawrap')
-    .append('div')
-    .attr('class','yearsec y'+item.y)
-    .append('h4').html(item.y);
-    var f=item.f[facets[0].n].terms;
-    f.forEach((baby, x) => {
-      d3.select('.y'+item.y).append('h3').html(baby.term+': '+baby.count)
-    });
-  });
+  var increment=years;
+  var tracking=[];
+  var unit=''
+  // {n:,p:}
+  //this builds tracking
 
-  // d3.select('.datawrap')
-  // .selectAll('div')
-  // .data(data,d => d)
-  // .join('div')
-  // .attr('class','yearsec')
-  // .each(function(d,i,nodes){
-  //
-  // })
+  if(display==1){
+    unit='%';
+  //for each year
+    data.forEach((year, y) => {
+      //for each bucket in that year
+      year.f.forEach((bucket, b) => {
+        var xCord=year.y;
+        var yCord=parseFloat((bucket.count/year.h*100).toFixed(2));
+        var tracknum=tracking.findIndex(el=>el.n==bucket.term);
+        if(tracknum!==-1){
+          tracking[tracknum].x.push(xCord);
+          tracking[tracknum].y.push(yCord);
+        }else{
+          tracking.push({n:bucket.term,x:[xCord],y:[yCord],combo:[]});
+        }
+      });
+      //end of tracking maker
+    });
+  }else{
+    tracking.push({n:'hits',x:[],y:[],combo:[]})
+  data.forEach((year, y) => {
+    tracking[0].x.push(year.y);
+    tracking[0].y.push(year.h);
+  });
+}
+
+  //this finds the domain and range
+  var max=0;
+  //finds the max and DOUbLES as a function to fill in blank spaces
+  tracking.forEach((item, i) => {
+    var newM=d3.max(item.y)
+    if(newM>max){
+      max=newM;
+    }
+    //blank spaces set to 0
+    increment.forEach((year, y) => {
+      if(item.x.indexOf(year)==-1){
+        newInd=item.x.indexOf(year-1)+1
+        item.x.splice(newInd,0,year);
+        item.y.splice(newInd,0,0);
+      }
+      item.combo.push({year:item.x[y],count:item.y[y]})
+    });
+
+  });
+  var xPram=d3.scaleLinear()
+    .domain([increment[0],increment[increment.length-1]])
+    .range([0, 100]);
+  var yPram=d3.scaleLinear()
+    .domain([0,max])
+    .range([0, 100]);
+
+  //this clears the graph
+  var wrap=d3.select('#gwrapper')
+  wrap.selectAll('path').remove();
+  wrap.selectAll('line').remove();
+  d3.select('#increments').selectAll('div').remove();
+  //increment markers at the bottom and side
+  years.forEach((item, i) => {
+    var w=1;
+    if(i==0){
+      w='1px';
+    }
+    d3.select('#increments').append('div')
+    .style('flex',w)
+    .datum([item,data,tracking])
+    .classed('increment',true)
+    .append('h4').html(item);
+    d3.select('.increment:last-child')
+    .append('div').classed('lomark',true)
+  });
+  d3.select('.increment:first-child')
+  .append('div').classed('ymarkers',true)
+  for(i=4;i>0;i--){
+    var mVal=i/4*max;
+    if(max>20){
+      mVal=Math.round(mVal);
+    }
+    d3.select('.ymarkers')
+    .append('div').classed('mark'+i,true)
+    .append('h4').html(mVal+unit)
+    d3.select('.mark'+i)
+    .append('div').classed('himark',true);
+  }
+  // .html(max).classed('max',true)
+  //this draws each line
+  var line=d3.line()
+  .x(d => xPram(d.year))
+  .y(d => 100-yPram(d.count));
+  tracking.forEach((item, i) => {
+    svg=wrap.select('svg')
+    item.combo.forEach((circle, c) => {
+      svg.append('line')
+      .attr("x1",xPram(circle.year))
+      .attr("y1",100-yPram(circle.count))
+      .attr("x2",xPram(circle.year))
+      .attr("y2",100-yPram(circle.count))
+      .attr('vector-effect','non-scaling-stroke')
+    });
+
+    svg.append("path")
+      .datum(item.combo)
+      .attr('vector-effect','non-scaling-stroke')
+      .attr("stroke",`hsl(${399*i/tracking.length},100%, 75%)`)
+      .attr("d",line);
+  //end of tracking foreach
+  });
+d3.selectAll('path').on('mouseover',function(event){
+  var tInd=tracking.findIndex(el=>el.combo==event);
+  var tInd=tracking[tInd].n;
+  d3.selectAll('path').style('stroke-opacity','0.1');
+  d3.select(d3.event.currentTarget).style('stroke-opacity','1')
+  d3.select('#labeler').style('display','block').html(tInd);
+  d3.select('#mycursor').selectAll('h3').style('display','none')
+  d3.select('#mycursor').selectAll('h4').style('display','none')
+
+})
+d3.selectAll('path').on('mouseout',function(){
+  setTimeout(function(){
+    d3.selectAll('path').style('stroke-opacity','1');
+    d3.select('#labeler').style('display','none')
+    d3.select('#mycursor').selectAll('h3').style('display','block')
+    d3.select('#mycursor').selectAll('h4').style('display','block')
+  },1000)
+})
+
 }//end of paintgraph
 
-
+d3.selectAll('.toggledisp').on('click',function(){
+  var target=d3.event.currentTarget;
+  d3.selectAll('.dispick').classed('dispick',false);
+  d3.select(target).classed('dispick',true);
+  display=displayOptions.indexOf(target.textContent);
+  if(histoire.length>0){
+    paintGraph(histoire[presently].data);
+  }
+})
 
 var vase='https://api.nytimes.com/svc/search/v2/articlesearch.json?';
 var key='&api-key=8JjFROX7FQ09VP3hu6R7QsoYYaHUxiqz';
@@ -356,34 +527,69 @@ xmlhttp.onreadystatechange = function() {
 // xmlhttp.open("GET", url, true);
 // xmlhttp.send();
 
-startUp();
-
-function rotateThing(){
-  var h=window.innerHeight;
-  var w=window.innerWidth;
-  var turnt=h/w*-45+'deg';
-  document.querySelector('.wip-banner').style.setProperty('--degrees',turnt)
+var cursorTrack=function(event){
+  //mouse handler comes with info about where the mouse is
+  yCoord=event.clientY;
+  xCoord=event.clientX;
+  var cursor=document.querySelector('#mycursor')
+  cursor.style.top=yCoord+'px';
+  cursor.style.left=xCoord+'px';
+  var present=false;
+  var contBox=document.querySelector('#increments').getBoundingClientRect();
+  d3.selectAll('.increment')
+  .classed('marked',false)
+  .each(function(d,i,nodes){
+    var check=nodes[i].getBoundingClientRect()
+    if((Math.abs(check.right-xCoord)<check.width/2)&&!(yCoord>contBox.bottom)&&!(yCoord<contBox.y)){
+      d3.select(nodes[i]).classed('marked',true)
+      var info=d3.select(nodes[i]).datum();
+      var ind=info[1].findIndex(el=>el.y==info[0]);
+      var theData=info[1][ind];
+      if(pastCursor!==info){
+        // {n:bucket.term,x:[xCord],y:[yCord],combo:[]}
+        newcursor=d3.select('#mycursor')
+        newcursor.selectAll('h3').remove()
+        newcursor.selectAll('h4').remove()
+        newcursor.append('h3').html(info[0])
+        if(display==1){
+          theData.f.forEach((item, i) => {
+            var col=`hsla(${399*info[2].findIndex(el=>el.n==item.term)/info[2].length},100%, 75%,0.5)`;
+            var term=item.term;
+            if(term==''){
+              term='unlabeled';
+            }
+            newcursor.append('h4')
+            .html(term+': '+Math.round(item.count/theData.h*100)+'%')
+            .style('background-color',col);
+          });
+        }else{
+          newcursor.append('h4')
+          .html('hits:'+theData.h)
+        }
+      }
+      pastCursor=info;
+      present=true;
+    }else{
+    }
+  })
+  if (present==true){
+    cursor.style.display='flex';
+  }else{
+    cursor.style.display='none';
+  }
 }
+document.onmousemove=cursorTrack;
 
 
 
-window.addEventListener('resize',function(){
-  rotateThing();
-})
 
-
-// fq=subject.contains%3A%28%22politics%22%29NOTnews_desk%3A%22U.S.%22
-
-
-// fq=section_name.contains:("New York") AND news_desk.contains:("Automobiles")
-// fq=ingredients.contains:("apple"AND"cinnamon")
-
-//order of if/and/or does not matter-this returns recipes with apple and egg in them but not cinnamon
-// fq=ingredients.contains:("apple"NOT"cinnamon"AND"egg")
-// however you can group queries using parentheses
-// (("cinnamon"AND"apple")("tomato"AND"chicken")
-// works on global scope
-// fq=NOTingredients.contains:(NOT "garlic")&facet_fields=ingredients'
-
-//you can query for wordcount with comparision operators
-// fq=word_count:<500
+startUp();
+// function rotateThing(){
+//   var h=window.innerHeight;
+//   var w=window.innerWidth;
+//   var turnt=h/w*-45+'deg';
+//   document.querySelector('.wip-banner').style.setProperty('--degrees',turnt)
+// }
+// window.addEventListener('resize',function(){
+//   rotateThing();
+// })

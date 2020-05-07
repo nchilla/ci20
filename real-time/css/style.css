@@ -1,3 +1,186 @@
+
+
+
+
+
+
+
+#gcontrol{
+  position:absolute;
+  top:0;
+  left:0;
+  border-bottom: 1px solid black;
+  height:60px;
+  width:100%;
+}
+
+#mycursor{
+  background-color: white;
+  position:fixed;
+  display:none;
+  min-width:100px;
+  min-height:10px;
+  transform:translate(20px 0);
+  border:1px solid black;
+  box-shadow: 5px 5px 11px 0px rgba(0, 0, 0, 0.2);
+  z-index: 6000;
+  padding:15px;
+  padding-top:0px;
+  flex-flow: column nowrap;
+}
+#labeler{
+  display:none;
+  font-family: anonymous-pro,monospace;
+  font-size: 20px;
+  font-weight: 400;
+  margin-top:10px;
+}
+
+#mycursor h4{
+  margin-bottom:5px;
+}
+
+.g-option{
+  height:100%;
+  box-sizing: border-box;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-right:1px solid black;
+  display:inline-block;
+}
+
+.g-option h3{
+  margin:0;
+  color:gray;
+}
+.g-option h3::before{
+  content:'show:';
+  color:black !important;
+}
+.dispick{
+  color:black !important;
+}
+.toggledisp{
+  cursor:pointer;
+}
+
+
+
+
+
+
+#gwrapper{
+  position:absolute;
+  width:max(300px,calc(100% - 200px));
+  height:max(300px,calc(100% - 200px));
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+  top:min(100px,calc(50% - 150px));
+  left:min(100px,calc(50% - 150px));
+}
+#gwrapper svg{
+  top:0;
+  left:0;
+  position:absolute;
+  width:100%;
+  height:100%;
+  z-index:2;
+}
+
+path{
+  fill:none;
+  stroke-width:4px;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  pointer-events: visibleStroke;
+  stroke-opacity:1;
+  transition:stroke-opacity 0.3s;
+}
+line{
+  stroke-linecap:round;
+  stroke-width:20px;
+  stroke:gray;
+  opacity:0;
+  display:none;
+}
+#increments{
+  top:0;
+  left:0;
+  height:100%;
+  width:100%;
+  position:absolute;
+  display:flex;
+  flex-flow: row nowrap;
+  z-index:1;
+}
+.increment{
+  position:relative;
+  height:100%;
+  display: inline-block;
+  box-sizing: border-box;
+}
+.marked{
+  border-right:1px solid gray;
+}
+
+
+
+
+
+.increment:first-child{
+  max-width: 1px;
+}
+.increment:first-child h4{
+  width:10px;
+  transform:translateX(-50%);
+}
+.increment h4{
+  min-width: 10px;
+  width:100%;
+  position:absolute;
+  bottom:-30px;
+  right:-50%;
+  margin: 0;
+  display:block;
+  text-align: center;
+}
+.ymarkers{
+  position:absolute;
+  width:200px;
+  transform:translateX(-100%);
+  text-align: right !important;
+  height:100%;
+  display:flex;
+  flex-flow: column nowrap;
+}
+.ymarkers div{
+  flex:1;
+  position:relative;
+  padding-right: 10px;
+}
+.ymarkers h4{
+  text-align: right !important;
+  position:relative;
+  top:-6px;
+  width:inherit !important;
+}
+.himark{
+  width:10px;
+  height:100%;
+  position:absolute !important;
+  padding-right: 0 !important;
+  top:0;
+  border-top: 1px solid black;
+  right:0;
+}
+.lomark{
+  position:absolute;
+  right:0;
+  bottom:-10px;
+  height:10px;
+  width:100%;
+  border-right:1px solid black;
+}
 .wip-banner{
   --degrees:0;
   width:200%;
@@ -14,13 +197,7 @@
   opacity:1;
   z-index:3000;
 }
-.datawrap{
-  position:absolute;
-  top: 0;
-  left: 0;
-  width:100%;
-  height:100%;
-}
+
 .yearsec{
   overflow:hidden;
   width:calc(100% / 5);
@@ -42,11 +219,7 @@ h1{
   margin-top: 40px;
   margin-bottom: 20px;
 }
-h4{
-  font-family: anonymous-pro,monospace;
-  font-size: 40px;
-  font-weight: 400;
-}
+
 
 
 .wip-banner h3{
@@ -70,7 +243,7 @@ body,html{
 #graph{
   height:100%;
   width:100%;
-  background-color: #C5DDB1;
+  /* background-color: #C5DDB1; */
   overflow:hidden;
   position:relative;
 }
@@ -157,6 +330,7 @@ body,html{
   display:flex;
   flex-flow: row nowrap;
 }
+
 
 
 input[type='text'],input[type='text']:focus{
@@ -298,6 +472,15 @@ input[type='text'],input[type='text']:focus{
   width: 0px;
   height: 0px;
 }
+h4{
+  display:inline-block;
+  font-family: anonymous-pro,monospace;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+
+
 h3{
   display:inline-block;
   font-family: anonymous-pro,monospace;
@@ -427,6 +610,9 @@ h2{
   }
   #nav div:first-child{
     border:none;
+  }
+  .g-option h3::before{
+    content:''
   }
 }
 

@@ -9,11 +9,15 @@
   </head>
   <body>
     <div id='graph'>
-      <div class="wip-banner">
-        <h1>CONSTRUCTION ZONE</h1>
-        <h3>This spot is going to have a graph charting the data the user pulls below over time. I'm not done with that yet (sorry). I spent a lot of time on the <a href='#control'>filter system below</a>, and it's mostly functional in pulling the data I'm going to use for the graph.</h3>
+      <div id='gcontrol'>
+        <div class="g-option">
+          <h3 class='noselect'><span class='toggledisp'>total articles</span>/<span class='toggledisp dispick'>categories</span></h3>
+        </div>
       </div>
-      <div class="datawrap"></div>
+      <div id='gwrapper'>
+        <svg vector-effect='non-scaling-stroke' viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+        <div id='increments'></div>
+      </div>
     </div>
     <div id='control'>
       <div id='options'></div>
@@ -29,6 +33,9 @@
         <h2>Prioritize a category and the results will be sorted into buckets for the top 10 (max) items inside of it.</h2>
         <div id='buckets'></div>
       </div>
+    </div>
+    <div id='mycursor'>
+      <div id='labeler'></div>
     </div>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="script.js" charset="utf-8"></script>
