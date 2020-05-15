@@ -108,9 +108,6 @@ br{
   padding-right:var(--padding);
   box-sizing: border-box;
 }
-#botbar .scale{
-  width:300px;
-}
 
 
 #filtering{
@@ -579,6 +576,10 @@ br{
   #reset::after{
     content:'↻reset';
   }
+  .scale::before{
+    content:'';
+  }
+
   /* .sonnet{
     font-size:16px;
   } */
