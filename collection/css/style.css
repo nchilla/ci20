@@ -405,8 +405,18 @@ br{
 #selected .line4,.line8,.line12{
   margin-bottom:20px;
 }
-#selected .line13,.line14{
+#selected.sonnet99 .line5,#selected.sonnet99 .line9,#selected.sonnet99 .line13{
+  margin-bottom:20px;
+}
+
+#selected.sonnet99 .line4,#selected.sonnet99 .line8,#selected.sonnet99 .line12{
+  margin-bottom:0px;
+}
+#selected .line13,.line14,.line15{
   text-indent: 60px;
+}
+#selected.sonnet99 .line13{
+  text-indent: 40px;
 }
 #selected .sw{
   background-color: inherit;

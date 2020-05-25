@@ -10,7 +10,7 @@ var counting=0;
 var updatedMain=false;
 var punct=new RegExp(',|!|;|:|\\?','gi');
 var dedication=[
-  'TO THE ONLIE BEGETTER OF','THESE INSUING SONNETS','​​Mr W.H.', 'ALL HAPPINESSE','​​AND THAT ETERNITIE','​​PROMISED BY','OUR EVER-LIVING POET.','WISHETH','​​THE WELL-WISHING','ADVENTURER IN','SETTING','FORTH','T.T.']
+  'TO. THE. ONLY. BEGETTER. OF.','THESE. ENSUING. SONNETS.','​​Mr. W.H. ALL. HAPPINESS.','​​AND. THAT. ETERNITY.','​​PROMISED.','BY.','OUR. EVER-LIVING. POET.','WISHETH.','​​THE. WELL-WISHING.','ADVENTURER. IN.','SETTING.','FORTH.','T.T.']
 for(var q=0;q<dedication.length;q++){
   console.log(dedication[q])
 };
@@ -411,17 +411,19 @@ function buildFilters(){
     })//end of onclick
     d3.selectAll('#themes .t-header')
       .on('click', function(event){
-        var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
-        if (s==true){
-          allCheck[themes.findIndex(el=>el[0]==event)].v=false;
-        }else{
-          allCheck[themes.findIndex(el=>el[0]==event)].v=true;
-        }
-        var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
-        var pick=d3.select(d3.event.currentTarget.parentNode);
-        pick.selectAll('.t-item').each(function(d,i,nodes){
-          selectThemes(nodes[i],s);
-        })
+        // var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
+        // if (s==true){
+        //   allCheck[themes.findIndex(el=>el[0]==event)].v=false;
+        // }else{
+        //   allCheck[themes.findIndex(el=>el[0]==event)].v=true;
+        // }
+        // var s=allCheck[themes.findIndex(el=>el[0]==event)].v;
+        // var pick=d3.select(d3.event.currentTarget.parentNode);
+        // pick.selectAll('.t-item').each(function(d,i,nodes){
+        //   selectThemes(nodes[i],s);
+        // })
+        var cEvent=d3.event.currentTarget;
+        selectThemes(cEvent);
         sentenceBuilder();
     })//end of onclick
     function selectThemes(cNode,head){
@@ -515,16 +517,13 @@ function sentenceBuilder(){
     for(var x=0;x<allCheck.length;x++){
       var cArr=allCheck[x].a;
       var arrLeng=cArr.length;
-      if(arrLeng==themes[x].length-1){
-        tStr=tStr+' '+themes[x][0]+',';
+
+      for(var f=0; f<arrLeng;f++){
+        var num=parseInt(cArr[f][1])
+        tStr=tStr+' '+themes[x][num]+',';
         selCount++;
-      }else{
-        for(var f=0; f<arrLeng;f++){
-          var num=parseInt(cArr[f][1])
-          tStr=tStr+' '+themes[x][num]+',';
-          selCount++;
-        }
       }
+
     }
     tStr=tStr.slice(0,tStr.length-1);
     if(selCount>1){
@@ -581,7 +580,22 @@ function filterText(){
         var present=allCheck[x].a;
         for(var r=0;r<present.length;r++){
           if(l.theme.includes(present[r])){
+          }else if(present[r][1]==0){
+            //this is an OR gate for the headers, like time,nature,etc
+            var fl=present[r][0];
+            var ithaz=function(y){
+              if(y[0]==fl){
+                return true;
+              }else{
+                return false;
+              }
+            }
+            if(l.theme.some(ithaz)){
+            }else{
+              including++;
+            }
           }else{
+            //this is an AND gate for non-headers
             including++;
           }
         }
